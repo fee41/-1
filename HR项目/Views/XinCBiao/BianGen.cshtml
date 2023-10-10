@@ -1,0 +1,227 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="../../css/table.css" type="text/css" />
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+    <title>无标题文档</title>
+    <style type="text/css">
+        <!--
+        .style3 {
+            color: #0000CC
+        }
+        -->
+    </style>
+    <style type="text/css">
+        .el-table tr {
+            background-color: #FFFFCC !important;
+        }
+    </style>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+        <form method="post" action="/HR_Fist/salaryCriterion/salaryCriterionAction!initSalaryStandardCheckList.action">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬标准登记变更</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        当前等待复核的薪酬标准总数:
+                        {{zong}}
+                        例
+                    </td>
+                </tr>
+            </table>
+            <el-table :data="tableData"
+                      border
+                      style="width: 100%"
+                      :header-cell-style="{color: '#C8D6F1', fontSize: '18px', height:'64px',  background: '#FFFFCC'}">
+                <el-table-column prop="standard_id" label="薪酬标准编号" width="250">
+                    <template slot-scope="scope">
+                        <span>{{ scope.row.standard_id }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="standard_name"
+                                 label="薪酬标准名称"
+                                 width="250">
+                </el-table-column>
+                <el-table-column prop="designer"
+                                 label="制定人"
+                                 width="200">
+                </el-table-column>
+                <el-table-column prop="regist_time"
+                                 label="日期"
+                                 width="200">
+                </el-table-column>
+                <el-table-column prop="salary_sum"
+                                 label="薪酬总额"
+                                 width="250">
+                </el-table-column>
+                <el-table-column label="变更">
+                    <template slot-scope="scope">
+                        <el-button size="mini"
+                                   v-on:click="handleEdit(scope.row)">变更</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <div align="center" style="font-size: 18px;color: gray">
+                &nbsp;&nbsp;总数：
+                <font style="color: maroon;font-weight: bold;">{{zong}}</font>
+                例
+                &nbsp;&nbsp;&nbsp;
+                每页显示 <font style="color: maroon;font-weight: bold;">{{pageSize}}</font>
+                条
+                &nbsp;&nbsp;&nbsp;
+                当前第 <font style="color: maroon;font-weight: bold;">{{currentPage}}</font>
+                页
+                &nbsp;&nbsp;&nbsp;共
+                <font style="color: maroon;font-weight: bold;">{{Totalpage}}</font>
+                页
+                <a style="color: navy;font-weight: bold" v-on:click="sy()">首页</a>
+
+                <a style="color: navy;font-weight: bold" v-on:click="syy()">上一页</a>
+
+                <a style="color: navy;font-weight: bold"
+                   v-on:click="xyy()">下一页</a>
+
+                <a style="color: navy;font-weight: bold"
+                   v-on:click="moy()">末页</a>
+                &nbsp;&nbsp;&nbsp;跳到第
+                <input id=page type=text v-model="tiao" class=input1 size=1>
+                页&nbsp;&nbsp;
+                @*<input type="image" v-on:click="t()" src="../../images/go.bmp" width=18 height=18 border=0>*@
+                <a style="color: navy;font-weight: bold"
+                   v-on:click="t()">GO</a>
+                <input type="hidden" name="page.startPage" id="startpage" value="1">
+            </div>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    tableData: [],//进行存储份分页数据
+                    pageSize: 5,//，每页显示的条数
+                    currentPage: 1,//当前页数
+                    zong: 0,//总条数
+                    Totalpage: 0,//总页数
+                    tiao: 1,//跳转到哪一页
+
+                }
+            },
+            methods: {
+                fill() {
+                    var t =@Html.Raw(Json.Encode(ViewBag.s));
+                    axios("/XinCBiao/MoHuYe1", {
+                        params: {
+                            pageSize: this.pageSize,
+                            currentPage: this.currentPage,
+                            tiao:t
+                        }
+                    })
+                        .then(res => {
+                            this.tableData = res.data.CList;
+                            this.zong = res.data.Totalnumber;
+                            this.Totalpage = res.data.Totalpage;
+                            this.tableData = res.data.CList.map(item => ({
+                                ...item,
+                                regist_time: new Date(parseInt(item.regist_time.substr(6))).toLocaleString()
+                            }));
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+
+                     //上一页
+                syy() {
+                    if (this.currentPage - 1 == 0) {
+                        this.$message({
+                            message: '没有上一页',
+                            type: 'success'
+                        });
+                        return
+                    }
+                    this.currentPage -= 1;
+                    this.fill();
+                },
+                //首页
+                sy() {
+                    this.currentPage = 1;
+                    this.fill();
+                    this.$message({
+                        message: '已跳转到首页',
+                        type: 'success'
+                    });
+                },
+                //下一页
+                xyy() {
+                    if (this.currentPage + 1 > this.Totalpage) {
+                        this.$message({
+                            message: '没有下一页',
+                            type: 'success'
+                        });
+                        return
+                    }
+                    this.currentPage += this.currentPage;
+                    this.fill();
+                },
+                //末页
+                moy() {
+                    this.currentPage = this.Totalpage;
+                    this.fill();
+                    this.$message({
+                        message: '已跳转到末页',
+                        type: 'success'
+                    });
+                },
+                //跳转到哪一页
+                t() {
+                    if (this.tiao < 1 || this.tiao > this.Totalpage) {
+                        this.$message({
+                            message: '当前页数不存在',
+                            type: 'error'
+                        });
+                        return;
+                    }
+                    this.currentPage = this.tiao;
+                    this.fill();
+                },
+                //进行变更
+                handleEdit(row) {
+               location.href="/XinCBiao/BianJu?id=" + row.standard_id;
+
+                },
+            },
+            mounted: function () {
+                this.fill();
+            }
+
+        })
+    </script>
+</body>
+</html>

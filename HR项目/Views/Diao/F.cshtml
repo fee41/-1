@@ -1,0 +1,457 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css"></link>
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+
+<body>
+    <style type="text/css">
+        .el-cascader .el-input .el-input__inner, .el-cascader-menu__list, .el-input--suffix .el-input__inner, .el-select-dropdown__list {
+            background-color: #FFFFBB;
+        }
+    </style>
+    <div id="app">
+        <form action="">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                            <el-breadcrumb-item>调动管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>调动登记</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="right">
+                        <el-radio-group v-model="resource">
+                            <el-radio label="通过" value="ture"></el-radio>
+                            <el-radio label="不通过" value="fales"></el-radio>
+                        </el-radio-group>
+                        <input type="button" value="提交" class="BUTTON_STYLE1"
+                               v-on:click="mySubmit()">
+                        <input type="button" class="BUTTON_STYLE1"
+                               onclick="javascript:window.history.back();" value="返回">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr height="21">
+                    <td class="TD_STYLE1" width="8%">
+                        档案编号
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        <input type="text" name="majorChange.humanId" readonly="readonly"
+                               v-model="bh" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                        姓名
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        <input type="text" name="majorChange.humanName"
+                               v-model="name" readonly="readonly"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                    </td>
+                </tr>
+                <tr>
+
+                    <td class="TD_STYLE1" width="8%">
+                        原一级机构
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.firstKindName"
+                               v-model="yi" readonly="readonly"
+                               class="INPUT_STYLE2">
+                        <input type="hidden" name="majorChange.firstKindId" value="1353318953319">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                        原二级机构
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        <input type="text" name="majorChange.secondKindName"
+                               v-model="er" readonly="readonly"
+                               class="INPUT_STYLE2">
+                        <input type="hidden" name="majorChange.secondKindId" value="1353318979558">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                        原三级机构
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        <input type="text" name="majorChange.thirdKindName"
+                               v-model="san" readonly="readonly"
+                               class="INPUT_STYLE2">
+                        <input type="hidden" name="majorChange.thirdKindId" value="1353319077370">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1">
+                        原职位分类
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.majorKindName"
+                               v-model="yzw" readonly="readonly"
+                               class="INPUT_STYLE2">
+                        <input type="hidden" name="majorChange.majorKindId" value="02">
+                    </td>
+                    <td class="TD_STYLE1" width="12%">
+                        原职位名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.majorName"
+                               v-model="yzc" readonly="readonly"
+                               class="INPUT_STYLE2">
+                        <input type="hidden" name="majorChange.majorId" value="02">
+                    </td>
+                    <td class="TD_STYLE1">
+                        原薪酬标准
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.salaryStandardName"
+                               v-model="ybz"
+                               readonly="readonly" class="INPUT_STYLE2">
+                        <input type="hidden" name="majorChange.salaryStandardId" value="1353320082662">
+                    </td>
+                    <td class="TD_STYLE1">
+                        原薪酬总额
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.salarySum"
+                               v-model="yzh" readonly="readonly"
+                               class="INPUT_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="demonstration">
+                            请选择员工所在机构
+                        </span>
+                    </td>
+                    <td>
+                        <el-cascader :options="options"
+                                     v-model="value"
+                                     :props="{ checkStrictly: true }"
+                                     ref="cascaderMallCatergory"
+                                     clearable></el-cascader>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="demonstration">
+                            新职位分类/新职位名称
+                        </span>
+                    </td>
+                    <td>
+                        <el-cascader v-model="value1"
+                                     ref="cascaderMallCatergory1"
+                                     :options="options1"></el-cascader>
+                    </td>
+                    <td class="TD_STYLE1">
+                        新薪酬标准
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="xc" placeholder="新薪酬标准" v-on:change="handleChange1">
+                            <el-option v-for="(item, index) in xc1" :label="item.standard_name" :value="item.ssd_id " :key="index"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        新薪酬总额
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.newSalarySum" id="newSalarySum" readonly="readonly"
+                               v-model="zong" class="INPUT_STYLE2">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1">
+                        登记人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.register" readonly="readonly" v-model="djr"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        登记时间
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.registTime" readonly="readonly"
+                               id="Tdate" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                    </td>
+                    <td class="TD_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                    </td>
+                    <td class="TD_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        调动原因
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <textarea name="majorChange.changeReason" rows="6" class="TEXTAREA_STYLE1" readonly v-model="yuan"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        复合通过意见
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <textarea name="majorChange.checkReason" rows="6" v-model="yj" class="TEXTAREA_STYLE1"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <SCRIPT type="text/javascript">
+        function time() {
+            var tdate = document.getElementById("Tdate");
+            var d = new Date();
+            var y = d.getFullYear();
+            var moth = d.getMonth() + 1;
+            var date = d.getDate();
+            var h = d.getHours();
+            var m = d.getMinutes();
+            var s = d.getSeconds();
+            var hh = 20 - 1 - h;
+            var mm = 60 - 1 - m;
+            var ss = 60 - s;
+            if (hh > 0) {
+                mm = mm + 60 * hh;
+            }
+            if (moth < 10) {
+                moth = "0" + moth;
+            }
+            if (date < 10) {
+                date = "0" + date;
+            }
+            if (h < 10) {
+                h = "0" + h;
+            }
+            if (m < 10) {
+                m = "0" + m;
+            }
+            if (s < 10) {
+                s = "0" + s;
+            }
+            if (mm < 10) {
+                mm = "0" + mm;
+            }
+            if (ss < 10) {
+                ss = "0" + ss;
+            }
+
+            tdate.value = y + "-" + moth + "-" + date;
+
+        }
+        window.onload = time;
+        var out = window.setInterval(time, 1000);
+    </SCRIPT>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    tabel: [],
+                    bh: "",//编号
+                    name: "",//姓名
+                    yi: "",//原一
+                    er: "",//二
+                    san: "",//原三
+                    options: [],
+                    value: [],
+                    yzw: "",
+                    yzc: "",
+                    ybz: "",
+                    yzh: "",
+                    options1:[],
+                    value1: [],
+                    xc: "",
+                    xc1: [],
+                    zong:"0.00",
+                    yuan: "",
+                    m: "",
+                    djr: localStorage.getItem("username"),
+                    x: [],
+                    yj: "",
+                    y: "",
+                    resource:""
+                }
+            },
+            methods: {
+                fill() {
+                    axios.get("/Diao/ChaC1?id=" +@ViewBag.s)
+                        .then(res => {
+                            this.tabel = res.data;
+                            this.bh = this.tabel.human_id;
+                            this.name = this.tabel.human_name;
+                            this.yi = this.tabel.first_kind_name;
+                            this.er = this.tabel.second_kind_name;
+                            this.san = this.tabel.third_kind_name;
+                            this.yzw = this.tabel.human_major_kind_id;
+                            this.yzc = this.tabel.human_major_kind_name;
+                            this.ybz = this.tabel.salary_standard_name;
+                            this.yzh = this.tabel.salary_sum;
+                            axios.get("/Diao/SLian")
+                                .then(res => {
+                                    this.options = res.data
+                                    console.log(res.data);
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                })
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                           axios.get("/Diao/Lian2")
+                          .then(res => {
+                            this.options1 = res.data
+                            console.log(res.data);
+                        })
+                           .catch(err => {
+                            console.log(err);
+                           })
+                    axios.get("/Diao/Chaxin")
+                        .then(res => {
+                            this.xc1 = res.data
+                            console.log("xc:"+res.data);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                handleChange(row) {
+                    console.log(row);
+                },
+                handleChange1(value) {
+                    this.xc1.forEach(item => {
+                        if (item.ssd_id === value) {
+                            this.m = item.standard_name;
+                        }
+                    })
+                    axios.get("/Diao/CZong?id=" + this.xc)
+                        .then(res => {
+                            this.zong = res.data
+                            console.log("zong:" + res.data);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                fill1() {
+                    axios.get("/Diao/Xs1?id=" +@ViewBag.s)
+                        .then(res => {
+                            console.log(res.data);
+                            if (res.data.new_first_kind_id != "") {
+                                this.value = [res.data.new_first_kind_id];
+                            }
+                            if (res.data.new_second_kind_id != "  ") {
+                                this.value = [res.data.new_first_kind_id, res.data.new_second_kind_id];
+                            }
+
+                            if (res.data.new_third_kind_id != "  ") {
+                                this.value = [res.data.new_first_kind_id, res.data.new_second_kind_id, res.data.new_third_kind_id];
+                            }
+                            this.value1 = [res.data.new_major_kind_id, res.data.new_major_id];
+                            this.xc = res.data.new_salary_standard_id;
+                            this.zong = res.data.new_salary_sum;
+                            this.m = res.data.new_salary_standard_name;
+                            this.yuan = res.data.change_reason;
+                            this.y = res.data.mch_id;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                //进行提交
+                mySubmit() {
+                    let arr = this.$refs['cascaderMallCatergory'].getCheckedNodes()[0].pathLabels;
+                    let arr1 = this.$refs['cascaderMallCatergory1'].getCheckedNodes()[0].pathLabels;
+                    var s = document.getElementById("Tdate").value;
+                    axios.get("/Diao/Xiu", {
+                        params: {
+                            new_first_kind_id: this.value[0],
+                            new_first_kind_name: arr[0],
+                            new_second_kind_id: this.value[1],
+                            new_second_kind_name: arr[1],
+                            new_third_kind_id: this.value[2],
+                            new_third_kind_name: arr[2],
+                            new_major_kind_id: this.value1[0],
+                            new_major_kind_name: arr1[0],
+                            new_major_id: this.value1[1],
+                            new_major_name: arr1[1],
+                            human_id: this.bh,
+                            human_name: this.name,
+                            salary_standard_id: this.tabel.salary_standard_id,
+                            salary_standard_name: this.ybz,
+                            salary_sum: this.yzh,
+                            new_salary_standard_id: this.xc,
+                            new_salary_standard_name: this.m,
+                            new_salary_sum: this.zong,
+                            change_reason: this.yuan,
+                            register: this.djr,
+                            regist_time: s,
+                            check_reason: this.yj,
+                            mch_id: this.y,
+                            checker: this.djr,
+                            check_time: s,
+                            tg: this.resource
+                        }
+
+                    })
+                        .then(res => {
+                            if (res.data > 0) {
+                            location.href = "/Diao/TianSh"
+                            } else {
+                                alert("添加失败");
+                            }
+
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                }
+            },
+            mounted: function () {
+                this.fill();
+                this.fill1();
+            }
+
+        })
+    </script>
+</body>
+</html>

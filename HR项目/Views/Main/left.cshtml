@@ -1,0 +1,138 @@
+﻿@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>无标题文档</title>
+    <link href="~/javascript/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/javascript/easyui/themes/icon.css" rel="stylesheet" />
+    <script src="~/javascript/jquery-1.7.2.js"></script>
+    <script src="~/javascript/easyui/jquery.easyui.min.js"></script>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <link href="~/Scripts/1.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+    <link href="~/Scripts/unpkg.com_buefy@0.9.23_dist_buefy.min.css" rel="stylesheet" />
+    <script src="~/Scripts/unpkg.com_buefy@0.9.23_dist_buefy.min.js"></script>
+</head>
+<body style="background-color: #ebebeb">
+    <style type="text/css">
+        .el-menu-vertical-demo .el-menu-item a,
+        .el-menu-vertical-demo .el-submenu__title a {
+            color: black;
+        }
+    </style>
+    <style>
+
+        .el-menu-vertical-demo {
+            background-color: #ebebeb;
+        }
+
+        .el-submenu__title {
+            background-color: #ebebeb;
+        }
+
+        .el-menu-item {
+            background-color: #ebebeb;
+        }
+
+            .el-menu-item.is-active {
+                background-color: #ebebeb;
+            }
+    </style>
+
+    <div id="app">
+        <section>
+            <el-menu class="el-menu-vertical-demo" v-on:open="handleOpen" v-on:close="handleClose" :collapse="isCollapse">
+                <el-submenu :index="'1-'+(index+1)" v-for="(item,index) in list2">
+                    <template slot="title">
+                        <i :class="iconobj[index]"></i>
+                        <span slot="title" style="margin-left: -8px;">
+                            {{item.authName}}
+                        </span>
+                    </template>
+                    <el-menu-item v-if="item3.children.length==0" :index="'2-'+(index+1)" v-for="(item3,index) in item.children">
+                        <a :href="item3.Url" slot="title" id="a" target="mainFrame">{{item3.authName}}</a>
+                    </el-menu-item>
+                    <el-submenu v-if="item1.children.length>0" :index="'2-'+(index+1)" v-for="(item1,index) in item.children">
+                        @* <a slot="title" id="a">{{item1.authName}}</a>*@
+                        <template slot="title">
+                            <span slot="title" id="ii" style="margin-left: -8px;">
+                                {{item1.authName}}
+                            </span>
+                        </template>
+                        <el-menu-item :index="'3-'+(index+1)" v-for="(item2,index) in item1.children">
+                            <a :href="item2.Url" slot="title" id="a1" target="mainFrame">{{item2.authName}}</a>
+                        </el-menu-item>
+                    </el-submenu>
+                </el-submenu>
+            </el-menu>
+            @*<b-button v-on:click="open = true">Show</b-button>*@
+        </section>
+    </div>
+
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    open: false,
+                    overlay: true,
+                    fullheight: false,
+                    fullwidth: false,
+                    right: false,
+                    list2: [],
+                    isCollapse: false,
+                    iconobj: {
+                        "1": "el-icon-s-marketing",
+                        "2": "el-icon-s-home",
+                        "3": "el-icon-platform-eleme",
+                        "0": "el-icon-s-data",
+                        "4": "el-icon-s-tools",
+                        "5": "el-icon-s-help",
+                        "6": "el-icon-s-help"
+
+                    },
+                }
+            },
+            methods: {
+                fill() {
+                    this.bh = localStorage.getItem('uid');
+                    axios.get('/Home/Ll', {
+                        params: {
+                            rid: this.bh
+                        }
+                    })
+                        .then(res => {
+                            this.list2 = res.data
+                            console.log(this.list2)
+
+                        }).catch(err => {
+                            console.log(err);
+                        })
+
+                },
+                handleOpen(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+                handleClose(key, keyPath) {
+                    console.log(key, keyPath);
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+        });
+    </script>
+    <style>
+        .p-1 {
+            padding: 1em;
+        }
+    </style>
+</body>
+</html>

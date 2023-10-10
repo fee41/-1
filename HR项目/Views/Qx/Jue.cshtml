@@ -1,0 +1,227 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>角色管理</title>
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css" />
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+        <table width="100%">
+            <tr>
+                <td>
+                    <el-breadcrumb separator="/">
+                        <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                        <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                        <el-breadcrumb-item>权限管理</el-breadcrumb-item>
+                        <el-breadcrumb-item>角色管理</el-breadcrumb-item>
+                    </el-breadcrumb>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    当前角色总数：{{zong}}例
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <input type="button" value="添加角色" class="BUTTON_STYLE1" onclick="location.href='/Qx/TianJue'">
+                </td>
+            </tr>
+        </table>
+        <el-table :data="tableData"
+                  border
+                  style="width: 100%">
+            <el-table-column prop="RolesID"
+                             label="角色编号"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="RolesName"
+                             label="角色名称"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="RolesInstruction"
+                             label="角色说明"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="RolesIf"
+                             label="是否可用"
+                             width="180">
+
+                <template slot-scope="scope">
+                    <span v-if="scope.row. RolesIf== 0">是</span>
+                    <span v-else>否</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini"
+                               v-on:click="handleEdit( scope.row)">编辑</el-button>
+                    <el-button size="mini"
+                               type="danger"
+                               v-on:click="handleDelete(scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div align="center" style="font-size: 18px;color: gray">
+            &nbsp;&nbsp;总数：
+            <font style="color: maroon;font-weight: bold;">{{zong}}</font>
+            例
+            &nbsp;&nbsp;&nbsp;
+            每页显示 <font style="color: maroon;font-weight: bold;">{{pageSize}}</font>
+            条
+            &nbsp;&nbsp;&nbsp;
+            当前第 <font style="color: maroon;font-weight: bold;">{{currentPage}}</font>
+            页
+            &nbsp;&nbsp;&nbsp;共
+            <font style="color: maroon;font-weight: bold;">{{Totalpage}}</font>
+            页
+            <a style="color: navy;font-weight: bold" v-on:click="sy()">首页</a>
+
+            <a style="color: navy;font-weight: bold" v-on:click="syy()">上一页</a>
+
+            <a style="color: navy;font-weight: bold"
+               v-on:click="xyy()">下一页</a>
+
+            <a style="color: navy;font-weight: bold"
+               v-on:click="moy()">末页</a>
+            &nbsp;&nbsp;&nbsp;跳到第
+            <input id=page type=text v-model="tiao" class=input1 size=1>
+            页&nbsp;&nbsp;
+
+            <a style="color: navy;font-weight: bold"
+               v-on:click="t()">GO</a>
+            <input type="hidden" name="page.startPage" id="startpage" value="1">
+        </div>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    tableData: [],
+                    pageSize: 5,//，每页显示的条数
+                    currentPage: 1,//当前页数
+                    zong: 0,//总条数
+                    Totalpage: 0,//总页数
+                    tiao: 1,//跳转到哪一页
+                }
+            },
+            methods: {
+                fill() {
+                    axios.get("/Qx/ChaJu?", {
+                        params: {
+                            pageSize: this.pageSize,
+                            currentPage: this.currentPage
+                        }
+                    })
+                        .then(res => {
+                            this.tableData = res.data.CList;
+                            this.zong = res.data.Totalnumber;
+                            this.Totalpage = res.data.Totalpage;
+                            console.log(res.data.CList);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                //上一页
+                syy() {
+                    if (this.currentPage - 1 == 0) {
+                        this.$message({
+                            message: '没有上一页',
+                            type: 'success'
+                        });
+                        return
+                    }
+                    this.currentPage -= 1;
+                    this.fill();
+                },
+                //首页
+                sy() {
+                    this.currentPage = 1;
+                    this.fill();
+                    this.$message({
+                        message: '已跳转到首页',
+                        type: 'success'
+                    });
+                },
+                //下一页
+                xyy() {
+                    if (this.currentPage + 1 > this.Totalpage) {
+                        this.$message({
+                            message: '没有下一页',
+                            type: 'success'
+                        });
+                        return
+                    }
+                    this.currentPage += this.currentPage;
+                    this.fill();
+                },
+                //末页
+                moy() {
+                    this.currentPage = this.Totalpage;
+                    this.fill();
+                    this.$message({
+                        message: '已跳转到末页',
+                        type: 'success'
+                    });
+                },
+                //跳转到哪一页
+                t() {
+                    if (this.tiao < 1 || this.tiao > this.Totalpage) {
+                        this.$message({
+                            message: '当前页数不存在',
+                            type: 'error'
+                        });
+                        return;
+                    }
+                    this.currentPage = this.tiao;
+                    this.fill();
+                },
+                //进行编辑
+                handleEdit(row) {
+                    console.log(row.RolesID);
+
+                    location.href = "/Qx/BianJue?id=" + row.RolesID;
+                },
+                //进行删除
+                handleDelete(row) {
+                    if (confirm("是否进行删除？")) {
+                        axios.get("/Qx/JueSc?id=" + row.RolesID)
+                            .then(res => {
+                                if (res.data == "2") {
+                                    alert("角色正在被使用不可进行删除!");
+                                } else if (res.data == "1") {
+                                    alert("删除成功!");
+                                    this.fill();
+                                } else {
+                                    alert("删除失败!");
+                                }
+                            })
+                            .catch(res => {
+                                console.log(err);
+                            })
+
+                    }
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+@using Model
+@model Engage_Major_Release
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link rel="stylesheet" href="../../css/table.css" type="text/css">
+    <script type="text/javascript" src="../../javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui//lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script type="text/javascript"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+    <script type="text/javascript">
+        window.onload = check;
+        function tick() {
+            var now = new Date();
+            var hours, minutes, seconds, noon;
+            var intHours, intMinutes, intSeconds;
+            intHours = now.getHours();
+            intMinutes = now.getMinutes();
+            intSeconds = now.getSeconds();
+            if (intHours < 24) {
+                hours = intHours + ":";
+                noon = "A.M.";
+            } else {
+                intHours = intHours - 24;
+                hours = intHours + ":";
+                noon = "P.M.";
+            }
+            if (intMinutes < 10) {
+                minutes = "0" + intMinutes + ":";
+            } else {
+                minutes = intMinutes + ":";
+            }
+            if (intSeconds < 10) {
+                seconds = "0" + intSeconds + " ";
+            } else {
+                seconds = intSeconds + " ";
+            }
+            timeString = hours + minutes + seconds;
+            var now = new Date();
+            document.getElementById("nowTime").value = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate() + " " + timeString;
+            window.setTimeout("tick();", 1000);
+        }
+
+        //load事件
+        function check() {
+            //获得系统当前时间的方法
+            tick();
+        }
+    </script>
+    <script type="text/javascript">
+        function mysubmit() {
+
+            if (document.getElementById("engageType").value == "") {
+                alert("请选择招聘类型");
+                return;
+            }
+            if (document.getElementById("humanAmount").value == "") {
+                alert("请填写招聘人数");
+                return;
+            }
+            if (document.getElementById("date_start").value == "") {
+                alert("请选择截止日期");
+                return;
+            }
+
+            document.humanfileForm.submit();
+        }
+    </script>
+    <script type="text/javascript">
+
+        function submission() {
+            document.forms[0].submit();
+        }
+
+        function page(currentPage) {
+            document.getElementById("pid").value = currentPage;
+            document.forms[0].submit();
+        }
+        function se() {
+            var se = $("#ss").val();
+            console.log(se);
+            var url = "/ZhiWeiFaBu/GetLists/?id=" + se
+            console.log(url);
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#secondKind2").html('');
+                $.each(data, function (i, item) {
+                    console.log(item);
+                    $("#secondKind2").append("<option value='" + item.Major_Id + "'>" + item.Major_Name + "</option>");
+
+                })
+            });
+        };
+    </script>
+    <script type="text/javascript">
+
+        function yiji() {
+            var se = $("#one").val();
+            console.log(se);
+            var url = "/DangAa/IIshow/?id=" + se + "&name=first_kind_id";
+            console.log(url);
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#secondKind").html('');
+                $.each(data, function (i, item) {
+                    console.log(item.third_kind_name);
+                    $("#secondKind").append("<option value='" + item.second_kind_id + "'>" + item.second_kind_name + "</option>");
+
+                })
+            });
+        };
+        function er() {
+            var se = $("#secondKind").val();
+            console.log(se);
+            var url = "/DangAa/IIshow/?id=" + se + "&name=second_kind_id";
+            console.log(url);
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#thirdKind").html('');
+                $.each(data, function (i, item) {
+                    console.log(item.third_kind_name);
+                    $("#thirdKind").append("<option value='" + item.third_kind_id + "'>" + item.third_kind_name + "</option>");
+
+                })
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="app">
+        @{ IEnumerable<Config_Major_Kind> eng = ViewBag.s; IEnumerable<config_file_first_kind> eng2 = ViewBag.d;}
+        @using (Html.BeginForm("INSERT", "ZhiWeiFaBu", FormMethod.Post))
+        {
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">您正在做的业务是：人力资源--招聘管理--职位发布管理--职位发布登记 </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="submit" value="提交" class="BUTTON_STYLE1">
+                        <input type="reset" value="清除" class="BUTTON_STYLE1">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td class="TD_STYLE1" width="11%">
+                        I级
+                    </td>
+                    <td class="TD_STYLE1">
+
+                        <select name="first_kind_id" id="one" onclick="yiji()">
+                            @foreach (var item in eng2)
+                            {
+                                <option value="@item.first_kind_id" selected="selected">@item.first_kind_name</option>
+                            }
+                        </select>
+                    </td>
+                    <td class="TD_STYLE1" width="11%">
+                        II级
+                    </td>
+
+                    <td width="11%" class="TD_STYLE2">
+                        <select name="second_kind_id" id="secondKind"
+                                onclick="er()">
+                        </select>
+                    </td>
+                    <td class="TD_STYLE1" width="11%">
+                        III级
+                    </td>
+                    <td class="TD_STYLE1">
+                        <select name="third_kind_id" id="thirdKind">
+                        </select>
+                    </td>
+                    <td width="11%" class="TD_STYLE1">
+                        招聘类型
+                    </td>
+                    <td class="TD_STYLE2" colspan="2">
+                        @Html.DropDownListFor(e => e.engage_type, new SelectList(new[] { new { value = "校园招聘", text = "校园招聘" }, new { value = "社会招聘", text = "社会招聘" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        职位分类
+                    </td>
+                    <td class="TD_STYLE2">
+
+                        <select onclick="se()" id="ss" name="major_kind_id">
+                            @foreach (var item in eng)
+                            {
+                                <option value="@item.Major_kind_id">@item.Major_kind_name</option>
+                            }
+                        </select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        职位名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <select id="secondKind2" name="major_id">
+                        </select>
+                    </td>
+
+                    <td class="TD_STYLE1">
+                        招聘人数
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_amount, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        截止日期
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.deadline, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1">
+                        登记人
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.register, ViewBag.u as IEnumerable<SelectListItem>, new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        登记时间
+                    </td>
+                    <td class="TD_STYLE2">
+
+                        @Html.TextBoxFor(e => e.regist_time, new { @class = "INPUT_STYLE2", id = "nowTime" })
+                    </td>
+                    <td class="TD_STYLE2">&nbsp; </td>
+                    <td class="TD_STYLE2">&nbsp; </td>
+                    <td class="TD_STYLE2">&nbsp; </td>
+                    <td class="TD_STYLE2">&nbsp; </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        职位描述
+                    </td>
+                    <td class="TD_STYLE2" colspan="8">
+                        @Html.TextBoxFor(e => e.major_describe, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        招聘要求
+                    </td>
+                    <td class="TD_STYLE2" colspan="8">
+                        @Html.TextBoxFor(e => e.engage_required, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    tableData: [],//进行存储一级数据
+                    form: "",//进行存储一级id
+                    table2: [],//进行存储二级数据
+                    form2: "",//进行存储二级id
+                    table3: [],//进行存储三级数据
+                    form3: "",//进行存储三级id
+
+                    region: "",//进行存储是否
+                    mc: "",
+                    fu: "",
+                    options: [],
+                    value: [],
+
+                }
+            },
+            methods: {
+                xs() {
+                    axios.get("/KeHu/SLian")
+                        .then(res => {
+
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                ss() {
+                    axios.get("/ZhiWeiFaBu/ChaSanYg")
+                        .then(res => {
+                            this.options = res.data;
+                            console.log(res.data);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                ti() {
+                    axios.get("/KeHu/SanTia", {
+                        params: {
+                            first_kind_id: this.value[0],
+                            second_kind_id: this.value[1],
+                            third_kind_is_retail: this.region,
+                            third_kind_sale_id: this.fu,
+                            third_kind_name: this.mc
+                        }
+                    })
+                        .then(res => {
+                            if (res.data == "1") {
+                                location.href = "SanCg";
+                            } else {
+
+                            }
+                        })
+                        .cacth(err => {
+                            console.log(err);
+                        })
+                },
+                handleChange(row) {
+                    this.tableData = row;
+                    console.log(row);
+                    console.log(row[0]);
+                    document.getElementById("ww").value = row[0]
+                }
+            },
+            mounted: function () {
+                this.xs();
+                this.ss();
+            }
+        });
+    </script>
+</body>
+</html>

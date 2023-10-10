@@ -1,0 +1,126 @@
+﻿@{
+    Layout = null;
+}
+@using Model
+@model Engage_Interview
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>MianShiSX_Show</title>
+
+    <link rel="stylesheet" href="../../css/table.css" type="text/css">
+    <script type="text/javascript" src="../../javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui//lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script type="text/javascript"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />>
+</head>
+<body>
+    @{IEnumerable<Engage_Interview> eng = ViewBag.s; int rows = ViewBag.z; int cunt = ViewBag.m; int jia = cunt + 1; int jian = cunt - 1; int zon = rows % 2 == 0 ? rows / 2 : (rows + 1) / 2;}
+
+    <div>
+        <form method="post" name="fm" action="/HR_Fist/recruit/recruitAction!toSiftList?str=sift">
+            <input type="hidden" name="utilBean.currPage" id="page" />
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">
+                            您正在做的业务是：人力资源--招聘管理--面试管理--面试筛选--面试结果列表
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="返回" class="BUTTON_STYLE1" onclick="history.back();">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="10%" class="TD_STYLE1">
+                        档案编号
+                    </td>
+                    <td width="10%" class="TD_STYLE1">
+                        姓名
+                    </td>
+                    <td width="15%" class="TD_STYLE1">
+                        职位分类
+                    </td>
+                    <td width="15%" class="TD_STYLE1">
+                        职位名称
+                    </td>
+                    <td width="10%" class="TD_STYLE1">
+                        面试次数
+                    </td>
+                    <td width="10%" class="TD_STYLE1">
+                        面试时间
+                    </td>
+                    <td width="10%" class="TD_STYLE1">
+                        综合素质
+                    </td>
+                    <td width="10%" class="TD_STYLE1">
+                        筛选
+                    </td>
+                </tr>
+
+                @foreach (var item in eng)
+                {
+
+                    <tr class="TD_STYLE2    ">
+                        <td width="10%">
+                            @item.resume_id
+                        </td>
+                        <td>
+                            @item.human_name
+                        </td>
+                        <td>
+                            @item.human_major_kind_name
+                        </td>
+                        <td>
+
+                            @item.human_major_name
+                        </td>
+                        <td>
+                            @item.interview_amount
+                        </td>
+                        <td>
+
+                            @item.registe_time
+                        </td>
+                        <td>
+
+                            @item.multi_quality_degree
+                        </td>
+
+                        @if (@item.interview_status != "1")
+                        {
+                            <td class="TD_STYLE2">
+                                <a href=" /MianShi/MianShi_SXID_CX?id=@item.ein_id">筛选</a>
+                            </td>
+                        }
+                        @if (@item.interview_status == "1")
+                        {
+                            <td class="TD_STYLE2">
+                                <a href=" /MianShi/MianShi_SXID_CX?id=@item.ein_id">已筛选</a>
+                            </td>
+                        }
+                    </tr>
+
+                }
+            </table>
+            <p>
+                &nbsp;&nbsp;总数：@rows 例 &nbsp;&nbsp;&nbsp;当前第 @cunt 页 /每页显示 2 条 &nbsp;&nbsp;&nbsp;共 @zon 页 &nbsp;&nbsp;&nbsp;
+                <a href=" /MianShi/MianShiSX_Show?currentPage= @jian">上一页</a> &nbsp;&nbsp;&nbsp;
+                <a href="/MianShi/MianShiSX_Show?currentPage= @jia">下一页</a> &nbsp;&nbsp;&nbsp;
+        </form>
+    </div>
+</body>
+</html>

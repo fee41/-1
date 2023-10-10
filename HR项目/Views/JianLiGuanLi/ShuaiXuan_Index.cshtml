@@ -1,0 +1,195 @@
+﻿
+@{
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+@using Model
+@model Engage_Resume
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ShuaiXuan_Index</title>
+    <script type="text/javascript">
+        function search() {
+
+            if (document.getElementById("majorKindId").value == "0") {
+                document.getElementById("majorKindId").value = null;
+            }
+            document.resumeChooseForm.submit();
+        }
+    </script>
+    <link rel="stylesheet" href="../../css/table.css" type="text/css">
+    <script type="text/javascript" src="../../javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui//lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script type="text/javascript"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+
+
+
+    <link rel="stylesheet"
+          href="../../../css/table.css" type="text/css">
+    <link rel="stylesheet"
+          href="../../../css/cwcalendar.css" type="text/css">
+    <script type="text/javascript"
+            src="../../../javascript/comm/comm.js">
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/comm/list.js">
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/calendar-ch.js">
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/jquery-1.7.2.js">
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/locate.js">
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/select.js">
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/comm/time.js">
+    </script>
+    <script type="text/javascript">
+        function se() {
+            console.log(123);
+            var se = $("#ss").val();
+            console.log(se);
+            var url = "/ZhiWeiFaBu/GetLists/?id=" + se
+            console.log(url);
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#secondKind2").html('');
+                $.each(data, function (i, item) {
+                    console.log(item);
+                    $("#secondKind2").append("<option value='" + item.Major_Id + "'>" + item.Major_Name + "</option>");
+
+                })
+            });
+        };
+    </script>
+
+</head>
+
+<body>
+    <div id="app">
+        @{ IEnumerable<Config_Major_Kind> eng = ViewBag.s; }
+
+        <form role="form" action="/JianLiGuanLi/qd_show" method="post">
+            @*<input type="hidden" name="engageResume.humanMajorKindName"
+                   id="majorKindName" />
+            <input type="hidden" name="engageResume.humanMajorName"
+                   id="majorName" />
+            <input type="hidden" name="engageResume.checkStatus"
+                   value="false" />*@
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">您正在做的业务是：人力资源--招聘管理--简历管理--简历筛选 </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="submit" value="开始" class="BUTTON_STYLE1">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+
+                <tr>
+                    <td class="TD_STYLE1" width="30%">
+                        请选择职位分类
+                    </td>
+                    <td class="TD_STYLE2" width="30%">
+                        <select onclick="se()" name="human_major_id" multiple="" style="width: 290px;height: 100px" id="ss" class="SELECT_STYLE2">
+                            <option value="0">--请选择--</option>
+                            @foreach (var item in eng)
+                            {
+                                <option value="@item.Major_kind_id">@item.Major_kind_name</option>
+                            }
+                        </select>
+                        <select name="human_major_kind_id" multiple="multiple" style="width:290px;height: 100px"
+                                id="secondKind2" size="5"
+                                class="SELECT_STYLE2">
+                                <option>
+                                    --请选择--
+                                </option>
+                          
+                        </select>
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1" width="30%">
+                        请输入关键字
+                    </td>
+                    <td width="84%">
+                        <input type="text" name="utilBean.primarKey" value=""
+                               class="INPUT_STYLE2" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1" width="30%">
+                        请输入登记时间
+                    </td>
+                    <td width="84%" class="TD_STYLE2">
+
+
+                        <input type="date" name="pass_checkComment" id="utilBean.startDate" onclick="aa('utilBean.startDate')"
+                               style="width: 14%" class="INPUT_STYLE2">
+                        至
+                        <input type="date" name="pass_passComment" id="pass_checkComment"
+                               style="width: 14%" class="INPUT_STYLE2" onclick="aa('utilBean.endDate')">
+                        （YYYY-MM-DD）
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+    </div>
+    <script type="text/javascript">
+        var vr = new Vue({
+            el: "#app",
+           
+            methods: {
+                serr: function (row) {
+                    var se = $("#oprs")[0].value;
+                    //var se2 = $("#majorId")[0].value;
+                    //console.log(se);
+                    //axios.get('/JianLiGuanLi/Engage_Major_Release___DEL', {
+                    //    params: {
+                    //        id: row.mre_id
+                    //    }
+                    //}).then(res => {
+                    //    var t = this;
+                    //    t.fill(1, 3);
+                    //}).catch(err => {
+                    //    console.log(err);
+                    //    console.log(12);
+                    //})
+                }
+            }, mounted: function () {
+               
+            }
+
+        })
+    </script>
+
+</body>
+</html>

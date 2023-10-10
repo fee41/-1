@@ -1,0 +1,276 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="~/css/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="../../javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+
+    <style type="text/css">
+        .el-table tr {
+            background-color: #FFFFCC;
+        }
+
+        .el-input--suffix .el-input__inner {
+            height: 25px;
+            background-color: #FFFFBB;
+            padding-right: 48px;
+        }
+    </style>
+    <title>无标题文档</title>
+</head>
+<body>
+    <div id="app">
+        <form method="post" action="" v-on:submit="ti()">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬标准登记</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="submit" value="提 交" class="BUTTON_STYLE1">
+                    </td>
+                </tr>
+            </table>
+            <table id="stable" width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="74" class="TD_STYLE1">
+                        薪酬标准编号
+                    </td>
+                    <td width="168" class="TD_STYLE2">
+                        <input type="text" name="standard.standardId" v-model="bh" readonly="readonly" class="INPUT_STYLE2">
+                    </td>
+                    <td width="83" class="TD_STYLE1">
+                        薪酬标准名称
+                    </td>
+                    <td width="171" class="TD_STYLE2">
+                        <input type="text" name="standard.standardName" v-model="mc1" id="standardName" class="INPUT_STYLE2">
+                    </td>
+                    <td width="170" class="TD_STYLE1">
+                        薪酬总额
+                    </td>
+                    <td width="138" class="TD_STYLE2">
+                        <input type="text" name="standard.salarySum" id="sumSalary" v-model="jin" readonly class="INPUT_STYLE2" />
+                    </td>
+                    <td width="103" class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td width="95" height="26" class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        制定人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="zdr" placeholder="请选择制订人">
+                            <el-option v-for="item in user" :label="item.u_name" :value="item.u_name"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        登记人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="standard.register" v-model="mc" readonly="readonly" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        登记时间
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" id="Tdate" v-model="sj" name="standard.registTime" readonly="readonly" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        备注
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <textarea name="standard.remark" rows="4" class="TEXTAREA_STYLE1" v-model="bz"></textarea>
+                    </td>
+                </tr>
+            </table>
+
+            <el-table :data="tableData"
+                      height="250"
+                      border
+                      style="width: 100%"
+                      :header-cell-style="{color: '#C8D6F1', fontSize: '18px', height:'64px',  background: '#FFFFCC'}">>
+                <el-table-column prop="pbc_id"
+                                 label="序号"
+                                 width="480">
+                </el-table-column>
+                <el-table-column prop="attribute_name"
+                                 label="薪酬项目名称"
+                                 width="480">
+                </el-table-column>
+                <el-table-column label="用户输入" width="310">
+                    <template slot-scope="scope">
+                        <el-input v-model="scope.row.inputValue" v-on:input="updateTotalSalary" placeholder="请输入值"></el-input>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-button v-on:click="zs()">请选择薪资组合</el-button>
+            <br />
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange">全选</el-checkbox>
+            <div style="margin: 15px 0;"></div>
+            <el-checkbox-group v-model="checkedCities" v-on:change="handleCheckedCitiesChange">
+                <el-checkbox v-for="city in cities" :label="city" :key="city.pbc_id">{{city.attribute_name}}</el-checkbox>
+            </el-checkbox-group>
+            <p>
+                &nbsp;
+            </p>
+        </form>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    user: [],//存储用户表信息
+                    tableData: [],//存储薪酬信息
+                    inputValue: "",
+                    jin: 0.0,//总金额
+                    mc: localStorage.getItem("username"),//进行获取登录名称
+                    bh: Math.floor(Math.random() * (9999999999999 - 1000000000000 + 1)) + 1000000000000,//随机编号
+                    sj: "",//显示现在时间
+                    zdr: "",//制订人
+                    bz: "",//备注
+                    mc1: "",
+                    rowInputData: [],//进程存储每列金额
+                    mjin: "",//金额
+                    mbh: "",//编号
+                    mname: "",//名称
+                    checkAll: false,
+                    checkedCities: [],
+                    cities: [],
+                    isIndeterminate: true
+                }
+            },
+            methods: {
+                u() {
+                    axios.get("/XinCBiao/Yh")
+                        .then(res => {
+                            this.user = res.data;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                //进行显示薪酬项目名称
+                fill() {
+                    axios.get("/XinCBiao/ChaXinMc")
+                        .then(res => {
+                            console.log(res.data);
+                            this.cities = res.data;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                //计算金额
+                updateTotalSalary() {
+                    this.rowInputData = this.tableData.map(row => ({
+                        pbc_id: row.pbc_id,
+                        attribute_name: row.attribute_name,
+                        inputValue: row.inputValue,
+                    }));
+                    this.jin = this.tableData.reduce((total, row) => total + parseFloat(row.inputValue || 0), 0).toFixed(2);
+                },
+                //进行计算当前时间
+                updateCurrentTime() {
+                    const currentTime = new Date();
+                    const formattedTime = `${currentTime.getFullYear()}-${(currentTime.getMonth() + 1).toString().padStart(2, '0')}-${currentTime.getDate().toString().padStart(2, '0')} ${currentTime.getHours().toString().padStart(2, '0')}:${currentTime.getMinutes().toString().padStart(2, '0')}:${currentTime.getSeconds().toString().padStart(2, '0')}`;
+                    this.sj = formattedTime;
+                },
+
+                handleCheckAllChange(val) {
+                    this.checkedCities = val ? this.cities : [];
+                    this.isIndeterminate = false;
+                },
+                handleCheckedCitiesChange(value) {
+                    let checkedCount = value.length;
+                    this.checkAll = checkedCount === this.cities.length;
+                    this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+                },
+                //进行显示我选中的组合
+                zs() {
+                    this.tableData = this.checkedCities;
+                },
+                //进行提交
+                ti() {
+                    //进行循环金额
+                    for (const rowData of this.rowInputData) {
+                        const pbc_id = rowData.pbc_id;
+                        const inputValu = rowData.inputValue;
+                        const name = rowData.attribute_name;
+                        if (inputValu != undefined) {
+                            this.mbh += pbc_id + ",";
+                            this.mjin += inputValu + ",";
+                            this.mname += name + ",";
+                        }
+                    }
+
+                    this.mbh = this.mbh.slice(0, -1);
+                    this.mjin = this.mjin.slice(0, -1);
+                    this.mname = this.mname.slice(0, -1);
+
+                    axios.get("/XinCBiao/TianShi", {
+                        params: {
+                            jin: this.mjin,
+                            bh: this.mbh,
+                            name: this.mname,
+                            standard_id: this.bh,
+                            standard_name: this.mc1,
+                            designer: this.zdr,
+                            salary_sum: this.jin,
+                            register: this.mc,
+                            regist_time: this.sj,
+                            remark: this.bz
+                        }
+                    })
+                        .then(res => {
+                            if (res.data > 0) {
+                                location.href = "/XinCBiao/Index";
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                }
+            },
+            mounted: function () {
+                this.fill();
+                this.u();
+                this.updateCurrentTime();
+                setInterval(this.updateCurrentTime, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+﻿@{
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+@using Model;
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css" />
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+
+    <style type="text/css">
+        .el-table tr {
+            background-color: #FFFFCC;
+        }
+
+        .el-input--suffix .el-input__inner {
+            height: 25px;
+            background-color: #FFFFBB;
+            padding-right: 48px;
+        }
+    </style>
+    <title>无标题文档</title>
+</head>
+
+<body>
+    <div id="app">
+        @{ SalaryStandard salary = ViewBag.s; }
+        <form action="" method="post" v-on:submit="ti()">
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬标准登记变更</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div align="right">
+                            <input type="submit" value="重新提交" class="BUTTON_STYLE1">
+                            <input type="button" value="返回" onclick="history.back();"
+                                   class="BUTTON_STYLE1">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <input type="hidden" name="standard.ssdId" value="1238">
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="12%" class="TD_STYLE1">
+                        薪酬编号
+                    </td>
+                    <td width="15%" class="TD_STYLE2">
+                        <input type="text" name="standard.standardName" id="standardName" readonly v-model="bh"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td width="12%" class="TD_STYLE1">
+                        薪酬标准名称
+                    </td>
+                    <td width="11%" class="TD_STYLE2">
+                        <input type="text" name="standard.standardName" id="standardName" v-model="name"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td width="11%" class="TD_STYLE1">
+                        薪酬总额
+                    </td>
+                    <td width="17%" class="TD_STYLE2">
+                        <input type="text" name="standard.salarySum" id="sumSalary" v-model="jin"
+                               class="INPUT_STYLE2" readonly="readonly">
+                    </td>
+                    <td width="12%" class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td width="10%" class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        制定人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="zdr" placeholder="请选择制订人">
+                            <el-option v-for="item in user" :label="item.u_name" :value="item.u_name"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        变更人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="bgr" placeholder="请选择变更人">
+                            <el-option v-for="item in user" :label="item.u_name" :value="item.u_name"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        变更时间
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="standard.changeTime"
+                               id="Tdate" readonly="readonly" v-model="sj"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        备注
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <textarea name="standard.remark" rows="4" class="TEXTAREA_STYLE1" v-model="bz"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        序号
+                    </td>
+                    <td colspan="3" class="TD_STYLE1">
+                        薪酬项目名称
+                    </td>
+                    <td colspan="4" class="TD_STYLE1">
+                        金额
+                    </td>
+                </tr>
+            </table>
+            <el-table :data="table"
+                      height="250"
+                      border
+                      style="width: 100%"
+                      :header-cell-style="{color: '#C8D6F1', fontSize: '18px', height:'64px',  background: '#FFFFCC'}">>
+                <el-table-column prop="item_id"
+                                 label="序号"
+                                 width="480">
+                </el-table-column>
+                <el-table-column prop="item_name"
+                                 label="薪酬项目名称"
+                                 width="480">
+                </el-table-column>
+                <el-table-column label="金额" width="320">
+                    <template slot-scope="scope">
+                        <input type="text" v-model="scope.row.salary" v-on:input="updateTotalSalary" class="INPUT_STYLE2">
+                    </template>
+                </el-table-column>
+            </el-table>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    user: [],//存储用户表信息
+                    bh: "",
+                    name: "",
+                    jin: "",
+                    zdr: "",
+                    bgr: "",
+                    sj: "",
+                    bz: "",
+                    table:[],
+                }
+            },
+            methods: {
+                u() {
+                    axios.get("/XinCBiao/Yh")
+                        .then(res => {
+                            this.user = res.data;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                fill() {
+                    this.bh = @Html.Raw(Json.Encode(@salary.standard_id));
+                   this.name = @Html.Raw(Json.Encode(@salary.standard_name));
+                    this.jin = @Html.Raw(Json.Encode(@salary.salary_sum));
+                    this.zdr = @Html.Raw(Json.Encode(@salary.designer));
+                     this.bz=@Html.Raw(Json.Encode(salary.remark));
+                    axios.get("/XinCBiao/BianJin?id=" + this.bh)
+                        .then(res => {
+                            this.table = res.data;
+                            console.log(this.table);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+
+                },
+                //进行计算当前时间
+                updateCurrentTime() {
+                    const currentTime = new Date();
+                    const formattedTime = `${currentTime.getFullYear()}-${(currentTime.getMonth() + 1).toString().padStart(2, '0')}-${currentTime.getDate().toString().padStart(2, '0')} ${currentTime.getHours().toString().padStart(2, '0')}:${currentTime.getMinutes().toString().padStart(2, '0')}:${currentTime.getSeconds().toString().padStart(2, '0')}`;
+                    this.sj = formattedTime;
+                },
+                //进行计算总金额
+                updateTotalSalary() {
+                    this.jin = this.table.reduce((total, item) => total + parseFloat(item.salary || 0), 0);
+                },
+                //进行提交
+                ti() {
+                    let rowData = "";
+                    let name = "";
+                    for (let i = 0; i < this.table.length; i++) {
+                        const row = this.table[i];
+                        rowData += row.sdt_id + ",";
+                        name += row.salary + ",";
+                    }
+                    //进行清除最后一个，号
+                    rowData = rowData.slice(0, -1);
+                    name = name.slice(0, -1);
+
+                    axios.get("/XinCBiao/Gen", {
+                        params: {
+                            id: rowData,
+                            jin: name,
+                            standard_name: this.name,
+                            salary_sum: this.jin,
+                            designer: this.zdr,
+                            changer: this.bgr,
+                            change_time: this.sj,
+                            standard_id: this.bh,
+                            remark: this.bz
+                        }
+                    })
+                        .then(res => {
+                            if (res.data == "1") {
+                                location.href = "/XinCBiao/Bian";
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                }
+            },
+            mounted: function () {
+                this.fill();
+                this.u();
+                this.updateCurrentTime();
+                setInterval(this.updateCurrentTime, 1000);
+            }
+
+        });
+    </script>
+</body>
+</html>

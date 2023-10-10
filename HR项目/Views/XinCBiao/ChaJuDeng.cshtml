@@ -1,0 +1,361 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="../../css/table.css" type="text/css" />
+
+    <title>无标题文档</title>
+    <style type="text/css">
+        <!--
+        .style3 {
+            color: #0000CC
+        }
+
+        td {
+            text-align: center
+        }
+        -->
+    </style>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script src="~/Scripts/echarts.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <form method="post" action="" v-on:submit="ti()">
+            <table width="100%">
+                <tr>
+                    <td colspan="2" style="text-align: left">
+                        <font color="black">
+                            您正在做的业务是：人力资源--薪酬标准管理--薪酬发放登记
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: right;">
+                        <input type="submit" value="提交" class="BUTTON_STYLE1">
+                        <input type="button" value="返回" onclick="javascript:window.history.back();" class="BUTTON_STYLE1">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: left">
+                        薪酬单编号：{{bh}}
+                        <input type="hidden" name="salaryGrant.salaryGrantId">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: left">
+                        机构：
+                        @ViewBag.i
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left">
+                        本机构总人数:{{reng}}
+                        <input type="hidden" name="salaryGrant.humanAmount" value="5">
+                        ，基本薪酬总数:.{{ji}}<input type="hidden" name="salaryGrant.salaryStandardSum" value="139823.0" />
+                        ，实发总额:<span id="salarySum_sum">{{zong}}</span>
+                        <input type="hidden" id="salaryPaidSum" name="salaryGrant.salaryPaidSum" value="139823.0" />
+                    </td>
+                    <td style="text-align: right;">
+                        登记人:<input type="text" name="salaryGrant.register" v-model="djr" size="8" readonly="readonly">
+                        登记时间：<span id="Tdate"></span>
+                        <input type="hidden" name="salaryGrant.registTime" id="Tdate2">
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td class="TD_STYLE1">
+                        <span>序号</span>
+                    </td>
+                    <td class="TD_STYLE1">
+                        <span>档案编号</span>
+                    </td>
+                    <td class="TD_STYLE1">
+                        <span>姓名</span>
+                    </td>
+                    <td class="TD_STYLE1">
+                        详细信息
+                    </td>
+
+                    <td class="TD_STYLE1" width="7%">
+                        奖励金额
+                    </td>
+                    <td class="TD_STYLE1" width="7%">
+                        销售绩效总额
+                    </td>
+                    <td class="TD_STYLE1" width="7%">
+                        应扣金额
+                    </td>
+                    <td class="TD_STYLE1" width="7%">
+                        实发金额
+                    </td>
+                </tr>
+
+                <input type="hidden" name="grantDetails[0].salaryGrantId" value="HS1353753198460">
+                <input type="hidden" id="salaryStandardSum1" name="grantDetails[0].salaryStandardSum" value="135827.0" />
+                <tr class="TD_STYLE2" v-for="(item, index) in tableData" :key="index">
+                    <td>
+                        {{item.huf_id}}
+                    </td>
+                    <td>
+                        {{item.human_id}}
+                    </td>
+                    <td>
+                        {{item.human_name}}
+                    </td>
+                    <td v-on:click="xs()" style=" color: #00ff1d;">
+                        点击显示详细信息
+                    </td>
+
+                    <td>
+                        <input type="text" name="grantDetails[0].bounsSum" id="bounsSum1"
+                               v-model="item.bounsSum" v-on:input="calculateSalaryPaidSum(index)"
+                               class="INPUT_STYLE2" />
+                    </td>
+                    <td>
+                        <input type="text" name="grantDetails[0].saleSum" id="saleSum1"
+                               v-model="item.saleSum" v-on:input="calculateSalaryPaidSum(index)"
+                               class="INPUT_STYLE2" />
+                    </td>
+                    <td>
+                        <input type="text" name="grantDetails[0].deductSum" id="deductSum1"
+                               v-model="item.deductSum" v-on:input="calculateSalaryPaidSum(index)"
+                               class="INPUT_STYLE2" />
+                    </td>
+                    <td>
+                        <input type="text" name="grantDetails[0].salaryPaidSum" readonly="readonly"
+                               :value="item.salaryPaidSum" class="INPUT_STYLE2" />
+                    </td>
+                </tr>
+            </table>
+            <el-dialog title="详细信息" :visible.sync="dialogFormVisible">
+                <div id="main" ref="harts" style="width: 600px;height:400px;"></div>
+            </el-dialog>
+        </form>
+    </div>
+
+    <SCRIPT type="text/javascript">
+
+        function time() {
+            var tdate = document.getElementById("Tdate");
+            var d = new Date();
+            var y = d.getFullYear();
+            var moth = d.getMonth() + 1;
+            var date = d.getDate();
+            var h = d.getHours();
+            var m = d.getMinutes();
+            var s = d.getSeconds();
+            var hh = 20 - 1 - h;
+            var mm = 60 - 1 - m;
+            var ss = 60 - s;
+            if (hh > 0) {
+                mm = mm + 60 * hh;
+            }
+            if (moth < 10) {
+                moth = "0" + moth;
+            }
+            if (date < 10) {
+                date = "0" + date;
+            }
+            if (h < 10) {
+                h = "0" + h;
+            }
+            if (m < 10) {
+                m = "0" + m;
+            }
+            if (s < 10) {
+                s = "0" + s;
+            }
+            if (mm < 10) {
+                mm = "0" + mm;
+            }
+            if (ss < 10) {
+                ss = "0" + ss;
+            }
+
+            tdate.innerHTML = y + "-" + moth + "-" + date + " " + h + ":" + m + ":" + s;
+            document.getElementById("Tdate2").value = tdate.innerHTML;
+        }
+        window.onload = time;
+        var out = window.setInterval(time, 1000);
+    </SCRIPT>
+
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    tableData: [],
+                    table: [],
+                    jin: "",
+                    sum: 0,
+                    bh: "",
+                    jgmc:"",//存储机构名称
+                    djr: localStorage.getItem("username"),
+                    ji:0,
+                    zong:0,
+                    dialogFormVisible: false,
+                    name: [],
+                    je: [],
+                    reng:0
+                }
+            },
+            methods: {
+                fill() {
+                    axios.get("/XinCBiao/ChaD3?id=" +@Html.Raw(Json.Encode(ViewBag.s)))
+                        .then(res => {
+                            this.tableData = res.data;
+                            this.reng = this.tableData.length;
+                            console.log(this.tableData[0]);
+                            for (var i = 0; i < this.tableData.length; i++) {
+                                this.ji += this.tableData[i].salary_sum;
+                                this.zong += this.tableData[i].demand_salaray_sum;
+                            }
+
+                            this.jin = this.tableData[0].salary_sum;
+                            this.bh = this.tableData[0].salary_standard_id;
+
+                            if (this.tableData[0].third_kind_name != null) {
+                                this.jgmc = this.tableData[0].third_kind_name
+                            } else if (this.tableData[0].second_kind_name != null) {
+                                this.jgmc = this.tableData[0].second_kind_name
+                            } else {
+                                this.jgmc = this.tableData[0].first_kind_name
+                            }
+
+                            for (let index = 0; index < this.tableData.length; index++) {
+                                this.calculateSalaryPaidSum(index);
+                            }
+                            axios.get("/XinCBiao/ChaD1?id=" + this.tableData[0].salary_standard_id)
+                                .then(res => {
+                                    this.table = res.data;
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                })
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                //进行计算金额
+                calculateSalaryPaidSum(index) {
+                    const item = this.tableData[index];
+                    const bounsSum = parseFloat(item.bounsSum) || 0;
+                    const saleSum = parseFloat(item.saleSum) || 0;
+                    const deductSum = parseFloat(item.deductSum) || 0;
+                    const salaryPaidSum = parseFloat(item.salary_sum);
+
+                    const calculatedSalaryPaidSum = salaryPaidSum + bounsSum +saleSum - deductSum;
+
+                    this.tableData[index].salaryPaidSum = calculatedSalaryPaidSum.toFixed(2);
+
+                },
+                //进行提交
+                ti() {
+                    console.log("Submitted data:");
+                    console.log("tableData:", this.tableData);
+                    console.log("table:", this.table);
+                    console.log("jin:", this.jin);
+                    console.log("sum:", this.sum);
+                    console.log("bh:", this.bh);
+                    console.log("djr:", this.djr);
+                    const submittedData = [];
+                    for (let index = 0; index < this.tableData.length; index++) {
+                        const item = this.tableData[index];
+                        submittedData.push({
+                            salary_grant_id:this.bh,
+                            huf_id: item.huf_id,
+                            human_id: item.human_id,
+                            human_name: item.human_name,
+                            bouns_sum: item.bounsSum,
+                            sale_sum: item.saleSum,
+                            deduct_sum: item.deductSum,
+                            salary_paid_sum: item.salaryPaidSum,
+                            salary_standard_sum: this.jin,
+                        });
+                    }
+                    const t = [];
+                    t.push({
+                        first_kind_id: this.tableData[0].first_kind_id,
+                        first_kind_name: this.tableData[0].first_kind_name,
+                        second_kind_id: this.tableData[0].second_kind_id,
+                        second_kind_name: this.tableData[0].second_kind_name,
+                        third_kind_id: this.tableData[0].third_kind_id,
+                        third_kind_name: this.tableData[0].third_kind_name,
+                    })
+
+                    console.log("Submitted data:", submittedData);
+                    axios.post("/XinCBiao/Den", {
+                        submittedDat: submittedData,
+                        djr: this.djr,
+                        time: document.getElementById("Tdate2").value,
+                        l: t,
+                        id: this.tableData[0].huf_id
+                    })
+                        .then(res => {
+                            if (res.data == "1") {
+                                location.href = "/XinCBiao/CFaJi"
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+
+                },
+                xs() {
+                    this.dialogFormVisible = true;
+                    console.log(this.table);
+                    for (var i = 0; i < this.table.length; i++) {
+                        this.name[i] = this.table[i].item_name;
+                        this.je[i] = this.table[i].salary;
+                    }
+                    this.$nextTick(() => {
+                        const myChart = echarts.init(this.$refs.harts);
+                        var option = {
+                            title: {
+                                text: '详细信息显示'
+                            },
+                            tooltip: {},
+                            legend: {
+                                data: ['金额']
+                            },
+                            xAxis: {
+                                data:this.name
+                            },
+                            yAxis: {},
+                            series: [
+                                {
+                                    name: '金额',
+                                    type: 'bar',
+                                    data: this.je
+                                }
+                            ]
+                        };
+                        myChart.setOption(option);
+
+                    })
+
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+        });
+    </script>
+</body>
+</html>

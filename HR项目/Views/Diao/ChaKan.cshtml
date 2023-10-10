@@ -1,0 +1,103 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="../../css/table.css"
+          type="text/css">
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+
+        <form action="list.html" method="post">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                <el-breadcrumb-item>调动管理</el-breadcrumb-item>
+                <el-breadcrumb-item>调动查询列表</el-breadcrumb-item>
+            </el-breadcrumb>
+
+            <br /><br /><br />
+
+            <el-table :data="table"
+                      style="width: 100%"
+                      height="250">
+                <el-table-column fixed
+                                 prop="new_first_kind_name"
+                                 label="I级机构"
+                                 width="150">
+                </el-table-column>
+                <el-table-column fixed
+                                 prop="new_second_kind_name"
+                                 label="II级机构"
+                                 width="150">
+                </el-table-column>
+                <el-table-column fixed
+                                 prop="new_third_kind_name"
+                                 label="Ⅲ级机构"
+                                 width="150">
+                </el-table-column>
+                <el-table-column fixed
+                                 prop="new_salary_standard_name"
+                                 label="薪酬标准"
+                                 width="150">
+                </el-table-column>
+                <el-table-column fixed
+                                 prop="human_name"
+                                 label="名字"
+                                 width="150">
+                </el-table-column>
+                <el-table-column label="查看">
+                    <template slot-scope="scope">
+                        <el-button size="mini"
+                                   v-on:click="handleEdit( scope.row)">查看</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </form>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    table:[],
+                }
+            },
+            methods: {
+                fill() {
+                    axios.get("/Diao/Ck", {
+                        params: {
+                            tiao : @Html.Raw(Json.Encode(ViewBag.s))
+                        }
+                    })
+                        .then(res => {
+                            this.table = res.data
+                            console.log(this.tabel);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                handleEdit(row) {
+                    console.log(row);
+                    location.href = "/Diao/KanJu?id=" + row.mch_id;
+
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+
+        })
+    </script>
+</body>
+</html>

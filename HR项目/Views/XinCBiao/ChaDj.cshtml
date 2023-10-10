@@ -1,0 +1,297 @@
+﻿@{
+    Layout = null;
+
+}
+@using Model;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css" />
+    <title>无标题文档</title>
+    <style type="text/css">
+        #d {
+            background-color: #FFFFBB;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            filter: alpha(opacity:20);
+            opacity: 0.2;
+            position: fixed;
+            display: none;
+        }
+
+        #parent {
+            border: 1px solid #FFDB6F;
+            width: 400px;
+            height: 200px;
+            position: absolute;
+            z-index: 2;
+            top: 20%;
+            left: 25%;
+            position: fixed;
+            display: none;
+        }
+
+        #child {
+            width: 100%;
+            height: 100%;
+            color: #C66C35;
+            font-size: 15px;
+            text-align: center;
+            line-height: 25px;
+            font-weight: bold;
+        }
+
+        .button {
+            height: 30px;
+            width: 90px;
+            border-color: #D4DEE7;
+            background-color: #D4DEE7;
+            font-weight: bold;
+            font-size: 15px;
+            color: #481858;
+            cursor: pointer;
+            BORDER-BOTTOM: #D4DEE7 1px solid;
+            FILTER: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#ffffff, EndColorStr=#C3DAF5);
+        }
+    </style>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+</head>
+<script type="text/javascript"
+        src="../../javascript/jquery-1.7.2.js">
+</script>
+<SCRIPT type="text/javascript">
+    $(function () {
+        $("#button1").click(function () {
+            $("#table1").hide(800);
+            $("#table2").hide(800);
+
+            $("#d").show(1800);
+            $("#parent").fadeIn(2200);
+        });
+        $("#close").click(function () {
+            $("#d").hide(800);
+            $("#parent").hide(600);
+
+            $("#table1").show(1000);
+            $("#table2").show(1000);
+
+        });
+        $("#sure").click(function () {
+
+            $("#d").hide(800);
+            $("#parent").fadeOut(600);
+
+            $("#table1").show(1000);
+            $("#table2").show(1000);
+            $("form:first").submit();
+        });
+    });
+</SCRIPT>
+
+<body>
+    <div id="app">
+        @{ SalaryStandard salary = ViewBag.s; }
+        <form action="" method="post">
+            <input type="hidden" name="standard.standardId" value="1353320112255">
+
+            <div id="d"></div>
+            <div id="parent">
+                <div id="child">
+                    <br><br>
+                    zhangsan,您确认打印此页面的信息吗？<br><br><br>
+                    <input type="button" class="button" value="确 定" id="sure" v-on:click="generateExcel()" />
+                    <input type="button" class="button" value="取 消" id="close" />
+                </div>
+            </div>
+
+            <table width="100%" id="table1">
+                <tr>
+                    <td>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬标准登记查询</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div align="right">
+                            <input type="button" value="打印" id="button1"
+                                   class="BUTTON_STYLE1">
+                            <input type="button" value="返回"
+                                   onclick="location.href='javascript:history.back(-1)'"
+                                   class="BUTTON_STYLE1">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee id="table2"
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="12%" class="TD_STYLE1">
+                        薪酬编号
+                    </td>
+                    <td width="15%" class="TD_STYLE2">
+                        @salary.standard_id
+                    </td>
+                    <td width="12%" class="TD_STYLE1">
+                        薪酬标准名称
+                    </td>
+                    <td width="11%" class="TD_STYLE2">
+                        @salary.standard_name
+                    </td>
+                    <td width="11%" class="TD_STYLE1">
+                        薪酬总额
+                    </td>
+                    <td width="17%" class="TD_STYLE2">
+                        @salary.salary_sum
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        制定人
+                    </td>
+                    <td class="TD_STYLE2">
+                        @salary.designer
+                    </td>
+                    <td class="TD_STYLE1">
+                        复核人
+                    </td>
+                    <td class="TD_STYLE2">
+                        @salary.checker
+                    </td>
+                    <td class="TD_STYLE1">
+                        复核时间
+                    </td>
+                    <td class="TD_STYLE2">
+                        @salary.check_time
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        备注
+                    </td>
+                    <td colspan="7" class="TD_STYLE2" height="68">
+                        @salary.check_comment
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        序号
+                    </td>
+                    <td colspan="3" class="TD_STYLE1">
+                        薪酬项目名称
+                    </td>
+                    <td colspan="4" class="TD_STYLE1">
+                        金额
+                    </td>
+                </tr>
+
+                <tr class="TD_STYLE2" v-for="item in tableData" :key="item.id">
+                    <td align="center">
+                        {{item.item_id}}
+                    </td>
+                    <td colspan="3">
+                        {{item.item_name}}
+                    </td>
+                    <td>
+                        {{item.salary}}
+                    </td>
+                    <td colspan="3">
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    tableData: [],
+                    table:[],
+                }
+            },
+            methods: {
+                fill() {
+                    axios.get("/XinCBiao/Ca", {
+                        params: {
+                            id:@salary.standard_id,
+                        }
+                    })
+                        .then(res => {
+                            this.tableData = res.data;
+                            var rawTimestamp = '@Html.Raw(Json.Encode(@salary.check_time))';
+                            var numericTimestamp = parseInt(rawTimestamp.match(/\d+/)[0]);
+
+                                    this.table.push({
+                                        standard_id: @Html.Raw(Json.Encode(@salary.standard_id))  ,
+                                        standard_name:  @Html.Raw(Json.Encode(@salary.standard_name)) ,
+                                        salary_sum: @Html.Raw(Json.Encode(@salary.salary_sum)) ,
+                                        designer:@Html.Raw(Json.Encode(@salary.designer))   ,
+                                        checker:@Html.Raw(Json.Encode(@salary.checker))  ,
+                                        check_comment:@Html.Raw(Json.Encode(@salary.check_comment))  ,
+                                        check_time: new Date(numericTimestamp)
+                                    });
+                            console.log(this.table);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                generateExcel() {
+
+                    var mergedData = this.tableData.concat(this.table);
+                    // Create a new workbook and sheet
+                    var wb = XLSX.utils.book_new();
+                    var ws = XLSX.utils.json_to_sheet(mergedData);
+
+                    // Add the sheet to the workbook
+                    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+                    // Write the workbook to a binary string
+                    var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
+
+                    // Convert the binary string to a Blob
+                    var blob = new Blob([s2ab(wbout)], {
+                        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    });
+
+                    // Generate a download link for the Blob
+                    var link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = "data.xlsx";
+                    link.click();
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+        });
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i < s.length; i++) {
+                view[i] = s.charCodeAt(i) & 0xFF;
+            }
+            return buf;
+        }
+    </script>
+</body>
+</html>

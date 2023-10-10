@@ -1,0 +1,225 @@
+﻿
+@{
+    Layout = null;
+}
+@using Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ZhiWeBianGen</title>
+    <link rel="stylesheet" href="../../css/table.css" type="text/css">
+    <script type="text/javascript" src="../../javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui//lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script type="text/javascript"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <style type="text/css">
+        .el-table tr {
+            background-color: #FFFFCC;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        @{IEnumerable<Engage_Major_Release> eng = ViewBag.s; int rows = ViewBag.z; int cunt = ViewBag.m; int jia = cunt + 1; int jian = cunt - 1; int zon = rows % 2 == 0 ? rows / 2 : (rows + 1) / 2;}
+
+        <form method="post" action="/HR_Fist/recruit/recruitAction!findMajor" name="fm">
+            <input type="hidden" name="utilBean.currPage" id="page" />
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">
+                            人力资源--招聘管理--职位发布管理--职位发布查询
+                        </font>
+                    </td>
+                </tr>
+
+            </table>
+            当前可变更是职位发布总数：2例
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="15%" class="TD_STYLE1">
+                        职位名称
+                    </td>
+                    <td width="20%" class="TD_STYLE1">
+                        公司名称
+                    </td>
+                    <td width="10%" class="TD_STYLE1">
+                        招聘人数
+                    </td>
+                    <td width="20%" class="TD_STYLE1">
+                        发布时间
+                    </td>
+                    <td width="20%" class="TD_STYLE1">
+                        截止时间
+                    </td>
+                    <td width="8%" class="TD_STYLE1">
+                        修改
+                    </td>
+                    <td width="8%" class="TD_STYLE1">
+                        删除
+                    </td>
+                </tr>
+
+
+                @foreach (var item in eng)
+                {
+
+                    <tr class="TD_STYLE2    ">
+                        <td width="10%">
+                            @item.major_name
+                        </td>
+                        <td>
+                            @item.second_kind_name
+                        </td>
+                        <td>
+                            @item.human_amount
+                        </td>
+                        <td>
+
+                            @item.regist_time
+                        </td>
+                        <td>
+                            @item.deadline
+                        </td>
+                        <td>
+
+                            <a href="/JianLiGuanLi/Index">	申请职位</a>
+                        </td>
+                       
+
+
+
+                    </tr>
+
+
+                }
+
+            </table>
+            <p>
+                &nbsp;&nbsp;总数：@rows 例 &nbsp;&nbsp;&nbsp;当前第 @cunt 页 /每页显示 2 条 &nbsp;&nbsp;&nbsp;共 @zon 页 &nbsp;&nbsp;&nbsp;
+                <a href=" /ZhiWeiFaBu/ZhiWeiDDSELECT?currentPage= @jian">上一页</a> &nbsp;&nbsp;&nbsp;
+                <a href="/ZhiWeiFaBu/ZhiWeiDDSELECT?currentPage= @jia">下一页</a> &nbsp;&nbsp;&nbsp;
+        </form>
+
+    </div>
+    <script type="text/javascript">
+        var vr = new Vue({
+            el: "#app",
+            data: {
+                table: [],
+                currentPage: 1,
+                pageSize: 2,
+                rows: 1,
+                imageUrl: '',
+                sum: this.rows % this.pageSize == 0 ? this.rows / this.pageSize : (this.rows + 1) / this.pageSize
+            },
+            methods: {
+
+                del: function (row) {
+                    if (Window.console("是否需要删除这条数据")) {
+                        axios.get('/ZhiWeiFaBu/Engage_Major_Release___DEL', {
+                            params: {
+                                id: row.mre_id
+                            }
+                        }).then(res => {
+                            var t = this;
+                            t.fill(1, 3);
+                        }).catch(err => {
+                            console.log(err);
+                            console.log(12);
+                        })
+                    }
+
+                },
+                handleClick: function (row) {
+                    location.href = "/ZhiWeiFaBu/biangen_Show?id=" + row.mre_id;
+                },
+                handleCurrentChange: function () {
+
+                    if (this.currentPage < 5) {
+                        this.currentPage++
+
+                    } else {
+                        this.currentPage = 1;
+                    }
+                    this.fill(this.currentPage, this.pageSize);
+                },
+                handleRemove() {
+                    if (this.currentPage > 1) {
+                        this.currentPage--
+
+                    } else {
+                        this.currentPage = 1;
+                    }
+                    this.fill(this.currentPage, this.pageSize);
+                },
+
+                fill: function (currentPage, pageSize) {
+                    axios.get('/ZhiWeiFaBu/FenYe', {
+                        params: {
+                            CurrentPage: this.currentPage,
+                            PageSize: this.pageSize
+                        }
+                    }).then(res => {
+                        for (var i = 0; i < res.data; i++) {
+                            const isoDate2 = res.data[i].deadline; // ISO 格式的日期时间
+                            const date2 = new Date(parseInt(isoDate2.substr(6))); // 解析 Microsoft JSON 日期格式
+                            const formattedDateTime2 = date2.toLocaleString(); // 转换为本地格式
+                            b[i].deadline = formattedDateTime2; // 更新日期时间字段的值
+                        }
+                        this.table = res.data.List;
+
+                        console.log(res.data.List);
+                        this.rows = res.data.Rows;
+                    }).catch(err => {
+                        console.log(err);
+                        console.log(12);
+                    })
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+        })
+    </script>
+
+    <script type="text/javascript">
+        function up(currPage) {
+            if (currPage <= 0) {
+                document.getElementById("page").value = row;
+            } else {
+                document.getElementById("page").value = currPage;
+            }
+            document.fm.submit();
+        }
+        function down(currPage, row) {
+            if (currPage >= row) {
+                document.getElementById("page").value = row;
+            } else {
+                document.getElementById("page").value = currPage;
+            }
+            document.fm.submit();
+        }
+        function tj(row) {
+            document.getElementById("page").value = document.getElementById("currPage").value;
+            if (document.getElementById("currPage").value > row) {
+                alert("最大页数为" + row + ",当前为第" + row + "页 ");
+                return false;
+            }
+            document.fm.submit();
+        }
+    </script>
+</body>
+</html>

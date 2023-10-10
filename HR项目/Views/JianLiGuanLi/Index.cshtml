@@ -1,0 +1,384 @@
+﻿@{
+    Layout = null;
+}
+@using Model
+@model Engage_Resume
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link rel="stylesheet" href="../../css/table.css" type="text/css">
+    <script type="text/javascript" src="../../javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui//lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script type="text/javascript"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <style type="text/css">
+        .el-table tr {
+            background-color: #FFFFCC;
+        }
+
+        body {
+            background-color: #FFFFCC;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = check;
+        function tick() {
+            var now = new Date();
+            var hours, minutes, seconds, noon;
+            var intHours, intMinutes, intSeconds;
+            intHours = now.getHours();
+            intMinutes = now.getMinutes();
+            intSeconds = now.getSeconds();
+            if (intHours < 24) {
+                hours = intHours + ":";
+                noon = "A.M.";
+            } else {
+                intHours = intHours - 24;
+                hours = intHours + ":";
+                noon = "P.M.";
+            }
+            if (intMinutes < 10) {
+                minutes = "0" + intMinutes + ":";
+            } else {
+                minutes = intMinutes + ":";
+            }
+            if (intSeconds < 10) {
+                seconds = "0" + intSeconds + " ";
+            } else {
+                seconds = intSeconds + " ";
+            }
+            timeString = hours + minutes + seconds;
+            var now = new Date();
+            document.getElementById("nowTime").value = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate() + " " + timeString;
+            window.setTimeout("tick();", 1000);
+        }
+
+        //load事件
+        function check() {
+            //获得系统当前时间的方法
+            tick();
+        }
+
+        function se() {
+            var se = $("#ss").val();
+            console.log(se);
+            var url = "/ZhiWeiFaBu/GetLists/?id=" + se
+            console.log(url);
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#secondKind2").html('');
+                $.each(data, function (i, item) {
+                    console.log(item);
+                    $("#secondKind2").append("<option value='" + item.Major_Id + "'>" + item.Major_Name + "</option>");
+
+                })
+            });
+        };
+    </script>
+</head>
+<body>
+    <div id="app">
+        @{ IEnumerable<Config_Major_Kind> eng = ViewBag.s; }
+        @using (Html.BeginForm("JianLiINSERT", "JianLiGuanLi", FormMethod.Post))
+        {
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font>您正在做的业务是：人力资源--招聘管理--简历管理--简历登记 </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="submit" value="提交" class="BUTTON_STYLE1">
+                        <input type="reset" value="清除" class="BUTTON_STYLE1">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td class="TD_STYLE1">
+                        职位分类
+                    </td>
+                    <td class="TD_STYLE2">
+
+                        <select onclick="se()" id="ss" name="human_major_id">
+                            @foreach (var item in eng)
+                            {
+                                <option value="@item.Major_kind_id">@item.Major_kind_name</option>
+                            }
+                        </select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        职位名称
+                    </td>
+                    <td class="TD_STYLE2" width="20%">
+                        <select id="secondKind2" name="human_major_kind_id">
+                        </select>
+                    </td>
+                    <td width="11%" class="TD_STYLE1">
+                        招聘类型
+                    </td>
+                    <td class="TD_STYLE2" colspan="2">
+                        @Html.DropDownListFor(e => e.engage_type, new SelectList(new[] { new { value = "校园招聘", text = "校园招聘" }, new { value = "社会招聘", text = "社会招聘" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                    <td rowspan="6" width="150px" height="50px" style="width:150px;height:150px;">
+                        <el-upload class="avatar-uploader"
+                                   action="/DangAa/WSC"
+                                   :show-file-list="false"
+                                   :on-success="handleAvatarSuccess"
+                                   :before-upload="beforeAvatarUpload">
+                            <img v-if="imageUrl" :src="imageUrl" class="avatar" name="">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        姓名
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_name, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        性别
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.human_sex, new SelectList(new[] { new { value = "男", text = "男" }, new { value = "女", text = "女" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        EMAIL
+                    </td>
+                    <td colspan="2" class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_email, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        电话
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_telephone, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        家庭电话
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_homephone, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        手机
+                    </td>
+                    <td colspan="2" class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_mobilephone, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                </tr>
+                <tr>
+
+                    <td class="TD_STYLE1">
+                        住址
+                    </td>
+                    <td colspan="3" class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_address, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+
+                    <td class="TD_STYLE1">
+                        邮编
+                    </td>
+                    <td colspan="2" class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_postcode, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1">
+                        国籍
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.human_nationality, new SelectList(new[] { new { value = "中国", text = "中国" }, new { value = "美国", text = "美国" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        出生地
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_birthplace, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        生日
+                    </td>
+                    <td width="13%" colspan="2" class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_birthday, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                </tr>
+                <tr>
+                    <td width="11%" class="TD_STYLE1">
+                        民族
+                    </td>
+                    <td class="TD_STYLE2" width="14%">
+                        @Html.DropDownListFor(e => e.human_race, new SelectList(new[] { new { value = "汉族", text = "汉族" }, new { value = "回族", text = "回族" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        宗教信仰
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.human_religion, new SelectList(new[] { new { value = "无", text = "无" }, new { value = "道教", text = "道教" }, new { value = "佛教", text = "佛教" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        政治面貌
+                    </td>
+                    <td class="TD_STYLE2" colspan="2">
+                        @Html.DropDownListFor(e => e.human_party, new SelectList(new[] { new { value = "民众", text = "民众" }, new { value = "党员", text = "党员" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        身份证号码
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_idcard, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        年龄
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_age, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        毕业院校
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_college, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+
+                    <td class="TD_STYLE1">
+                        学历
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.human_educated_degree, new SelectList(new[] { new { value = "大专", text = "大专" }, new { value = "本科", text = "本科" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        教育年限
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.human_educated_years, new SelectList(new[] { new { value = "6", text = "6" }, new { value = "12", text = "12" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        学历专业
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.human_educated_major, new SelectList(new[] { new { value = "计算机", text = "计算机" }, new { value = "会计", text = "会计" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+
+                    <td class="TD_STYLE1">
+                        薪酬要求
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.demand_salary_standard, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        注册时间
+                    </td>
+                    <td class="TD_STYLE2" readonly="readonly">
+                        @Html.TextBoxFor(e => e.regist_time, "", new { @class = "INPUT_STYLE2", id = "nowTime" })
+                    </td>
+                </tr>
+                <tr>
+
+                    <td class="TD_STYLE1">
+                        特长
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.human_specility, new SelectList(new[] { new { value = "数据库", text = "数据库" }, new { value = "Java", text = "Java" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        爱好
+                    </td>
+                    <td class="TD_STYLE2">
+                        @Html.DropDownListFor(e => e.human_hobby, new SelectList(new[] { new { value = "篮球", text = "篮球" }, new { value = "舞蹈", text = "舞蹈" } }, "value", "text", 0), new { @class = "SELECT_STYLE1" })
+                    </td>
+                    <td class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        个人履历
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.human_history_records, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1">
+                        备注
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        @Html.TextBoxFor(e => e.remark, "", new { @class = "INPUT_STYLE2" })
+                    </td>
+                    <td hidden>
+                        @Html.TextBoxFor(e => e.human_picture, "", new { @class = "INPUT_STYLE2", @id = "sr" })
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                imageUrl: '',
+                see: ''
+
+            },
+            methods: {
+                handleAvatarSuccess(res, file) {
+                    this.imageUrl = URL.createObjectURL(file.raw);
+                    var se = res.path;
+                    $("#sr").val;
+                    document.getElementById("sr").value = se;
+                    console.log(se);
+                },
+                beforeAvatarUpload(file) {
+                    const isJPG = file.type === 'image/jpeg';
+                    const isLt2M = file.size / 1024 / 1024 < 2;
+
+                    if (!isJPG) {
+                        this.$message.error('上传头像图片只能是 JPG 格式!');
+                    }
+                    if (!isLt2M) {
+                        this.$message.error('上传头像图片大小不能超过 2MB!');
+                    }
+                    return isJPG && isLt2M;
+                }
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>GongShuXing</title>
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css">
+    <script type="text/javascript"
+            src="../../javascript/comm/comm.js">
+    </script>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui//lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+        <form method="post" action="../customiz/customizAction!findMajor">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                            <el-breadcrumb-item>客户化设置</el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源档案管理设置</el-breadcrumb-item>
+                            <el-breadcrumb-item>职位设置</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <template>
+
+            <el-row>
+                <el-col :span="6">
+                    <input type="button" value="添加" onclick="window.location.href='/KeHu/GongShuXingadd'">
+                </el-col>
+            </el-row>
+            <el-table :data="table"
+                      style="width: 100%">
+                <el-table-column prop="Attribute_Kind"
+                                 label="属性种类"
+                                 width="300">
+                </el-table-column>
+                <el-table-column class="TD_STYLE2"
+                                 prop="Attribute_Name"
+                                 label="属性名称"
+                                 width="300">
+                </el-table-column>
+
+                <el-table-column class="TD_STYLE2"
+                                 fixed="right"
+                                 label="操作"
+                                 width="100">
+                    <template slot-scope="scope">
+                        <el-button v-on:click="handleClick(scope.row)" type="text" size="small">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+    </div>
+    <script type="text/javascript">
+        var vr = new Vue({
+            el: "#app",
+            data: {
+                table: [],
+            },
+            methods: {
+                fill: function () {
+                    axios.get('/KeHu/GongShuXingCX')
+                        .then(res => {
+                            this.table = res.data;
+                            console.log(res);
+                            this.rows = res.data.Rows;
+                        }).catch(err => {
+                            console.log(err);
+                            console.log(12);
+                        })
+                }
+                , handleClick: function (row) {
+                    var t = this;
+                    if (confirm("确定是否要删除这条数据")) {
+
+                        axios.get('/KeHu/ZhiChengDEL', {
+                            params: {
+                                id: row.Pbc_Id
+                            }
+                        }).then(res => {
+                            if (res.data > 0) {
+                                alert("删除成功")
+                                t.fill();
+                            } else {
+                                alert("删除失败!")
+                            }
+
+                        }).catch(err => {
+                            console.log(err);
+                            console.log(12);
+                        })
+
+                    }
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+        })
+    </script>
+</body>
+</html>

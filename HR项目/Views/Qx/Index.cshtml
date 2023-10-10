@@ -1,0 +1,130 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户管理</title>
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css" />
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+
+        <table width="100%">
+            <tr>
+                <td>
+                    <el-breadcrumb separator="/">
+                        <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                        <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                        <el-breadcrumb-item>权限管理</el-breadcrumb-item>
+                        <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+                    </el-breadcrumb>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    当前角色总数：6例
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <input type="button" value="添加用户" class="BUTTON_STYLE1" v-on:click="tian()">
+                </td>
+            </tr>
+        </table>
+
+        <el-table :data="tableData"
+                  height="250"
+                  border
+                  style="width: 100%">
+            <el-table-column prop="u_id"
+                             label="用户编号"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="u_true_name"
+                             label="用户名称"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="u_name"
+                             label="真实姓名"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="u_password"
+                             label="用户密码"
+                             width="180">
+            </el-table-column>
+            <el-table-column prop="RolesName"
+                             label="用户密码"
+                             width="180">
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini"
+                               v-on:click="handleEdit(scope.row)">编辑</el-button>
+                    <el-button size="mini"
+                               type="danger"
+                               v-on:click="handleDelete(scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    tableData: [],
+                }
+            },
+            methods: {
+                fill() {
+                    axios.get("/Qx/Cha")
+                        .then(res => {
+                            this.tableData = res.data;
+                            console.log(this.table);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                //进行编辑
+                handleEdit(row) {
+                    console.log(row);
+                    location.href = "/Qx/Bj?id=" + row.u_id;
+                },
+                //进行删除
+                handleDelete(row) {
+                    console.log(row);
+                    if (confirm("是否进行删除")) {
+                        axios.get("/Qx/Sc?id=" + row.u_id)
+                            .then(res => {
+                                if (res.data == "1") {
+                                    alert("删除成功");
+                                    this.fill();
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    }
+                },
+                tian() {
+                    location.href = "/Qx/Tian";
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+
+        })
+    </script>
+</body>
+</html>

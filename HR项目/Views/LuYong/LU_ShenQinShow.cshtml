@@ -1,0 +1,564 @@
+﻿
+@{
+    Layout = null;
+}
+@using Model
+@model Engage_Interview
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>MianShi_SXID_CX</title>
+    <link rel="stylesheet" href="../../css/table.css" type="text/css">
+    <script type="text/javascript" src="../../javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui//lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script type="text/javascript"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+
+    <link rel="stylesheet"
+          href="../../../css/table.css" type="text/css">
+    <link rel="stylesheet"
+          href="../../../css/cwcalendar.css"
+          type="text/css">
+    <script type="text/javascript"
+            src="../../../javascript/comm/comm.js">
+
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/comm/list.js">
+
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/calendar-ch.js">
+
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/jquery-1.7.2.js">
+
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/locate.js">
+
+    </script>
+    <script type="text/javascript"
+            src="../../../javascript/select.js">
+
+    </script>
+
+
+    <script type="text/javascript">
+
+
+        function toPhoto(data) {
+            var a = data.substring(data.indexOf(".") + 1)
+            if (a != "jpg" && a != "gif" && a != "bmp") {
+                alert("您上传的不是图片路径");
+            }
+        }
+
+        function toPhotofile(da) {
+            var a = da.substring(da.indexOf(".") + 1)
+            if (a != "doc") {
+                alert("您上传的不是文件路径");
+            }
+        }
+
+        var validateMsg = "";
+        function checkNotEmpty(ctlName, label) {
+            var oCtl = document.forms[0].elements[ctlName];
+            if (oCtl.value == "") {
+                if (label) {
+                    validateMsg += label;
+                }
+                validateMsg += "不能为空！\n";
+                oCtl.focus();
+            }
+        }
+
+        function checkValidateMsg() {
+            if (validateMsg != "") {
+                alert(validateMsg);
+                return false;
+            }
+            return true;
+        }
+
+        function tosubmit() {
+            validateMsg = "";
+            checkNotEmpty("ei.checker", "筛选人");
+            checkNotEmpty("ei.checkComment", "录用申请审核意见");
+            if (!checkValidateMsg()) {
+                return;
+            }
+            document.forms[0].elements["operate"].value = "doAdopt";
+            document.forms[0].submit();
+        }
+
+
+        function tozwfenlei(id) {
+            $("er.humanMajorKindName").value = $("er.humanMajorKindId").options[$("er.humanMajorKindId").selectedIndex].outerText;
+            engageResume.SelectConfig_major(id, callbackkind)
+        }
+
+        function callbackkind(data) {
+            $("er.humanMajorId").options.length = 0;
+            var o = new Option("--请选择--", 0);
+            $("er.humanMajorId").add(o);
+            DWRUtil.addOptions("er.humanMajorId", data, "majorId", "majorName");
+        }
+        function zwmingchen() {
+            $("er.humanMajorName").value = $("er.humanMajorId").options[$("er.humanMajorId").selectedIndex].outerText;
+        }
+
+
+        function tick() {
+            var now = new Date();
+            var hours, minutes, seconds, noon;
+            var intHours, intMinutes, intSeconds;
+            intHours = now.getHours();
+            intMinutes = now.getMinutes();
+            intSeconds = now.getSeconds();
+            if (intHours < 24) {
+                hours = intHours + ":";
+                noon = "A.M.";
+            } else {
+                intHours = intHours - 24;
+                hours = intHours + ":";
+                noon = "P.M.";
+            }
+            if (intMinutes < 10) {
+                minutes = "0" + intMinutes + ":";
+            } else {
+                minutes = intMinutes + ":";
+            }
+            if (intSeconds < 10) {
+                seconds = "0" + intSeconds + " ";
+            } else {
+                seconds = intSeconds + " ";
+            }
+            timeString = hours + minutes + seconds;
+            var now = new Date();
+
+            document.getElementById("nowTime").value = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate() + " " + timeString;
+            window.setTimeout("tick();", 100);
+        }
+
+        //load事件
+        function check() {
+            //获得系统当前时间的方法
+            tick();
+        }
+
+        function bis() {
+            document.getElementById("passCheckcomment").value = "释放简历";
+
+        }
+        function luy() {
+            document.getElementById("passCheckcomment").value = "申请录用";
+        }
+
+    </script>
+    <script type="text/javascript">
+
+    </script>
+</head>
+<body onload="check(),luy()">
+
+    @{ Engage_Interview eng = ViewBag.s; Engage_Resume res = ViewBag.d; }
+    <form role="form" action="/DangAa/Index?id=@eng.resume_id" method="post">
+
+        <table width="100%">
+            <tr>
+                <td>
+                    <font color="black">您正在做的业务是：人力资源--招聘管理--录用管理--录用审批  </font>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+
+
+                    <input type="submit" value="确认" class="BUTTON_STYLE1"
+                           onclick="search(@eng.ein_id,@eng.resume_id)">
+                    <input type="button" value="返回" class="BUTTON_STYLE1"
+                           onclick="history.back();">
+
+                </td>
+            </tr>
+        </table>
+        <table width="100%" border="1" cellpadding=0 cellspacing=1
+               bordercolorlight=#848284 bordercolordark=#eeeeee
+               class="TABLE_STYLE1">
+            <tr>
+                <td class="TD_STYLE1" width="11%">
+                    职位分类
+                </td>
+                <td width="14%" class="TD_STYLE2">
+                    <input type="hidden" name="interview_status" value="1" id="interview_status" />
+                    <input type="hidden" name="human_major_kind_id" value="@res.human_major_kind_id" />
+                    <input type="text" name="human_major_kind_name"
+                           value="@res.human_major_kind_name" readonly="readonly" class="INPUT_STYLE2">
+
+                </td>
+                <td width="11%" class="TD_STYLE1">
+                    职位名称
+                </td>
+                <td width="14%" class="TD_STYLE2">
+                    <input type="hidden" name="resume_id" id="resume_id" value="@res.res_id" />
+                    <input type="hidden" name="human_major_id" value="@res.human_major_id" />
+                    <input type="text" name="human_major_name" value="@res.human_major_name" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td width="11%" class="TD_STYLE1">
+                    招聘类型
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="" value="@res.engage_type" readonly="readonly" class="INPUT_STYLE2">
+
+                </td>
+
+                <td width="10%" rowspan="6" colspan="2" align="center">
+                    <img src="@res.human_picture" />
+                </td>
+
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    姓名
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageInterview.humanName" value="@res.human_name" readonly="readonly" class="INPUT_STYLE2">
+
+                </td>
+                <td class="TD_STYLE1">
+                    性别
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanSex" value="@res.human_sex" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    EMAIL
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanEmail" value="@res.human_email" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+            </tr>
+
+            <tr>
+                <td class="TD_STYLE1">
+                    电话号码
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanTelephone" value="@res.human_telephone" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    家庭电话
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanHomephone" value="@res.human_homephone" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    手机
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanMobilephone" value="@res.human_mobilephone" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    住址
+                </td>
+                <td colspan="3" class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanAddress" value="@res.human_address" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    邮编
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanPostcode" value="@res.human_postcode" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+            </tr>
+
+            <tr>
+                <td class="TD_STYLE1">
+                    国籍
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanNationality" value="@res.human_nationality" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    出生地
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanBirthplace" value="@res.human_birthplace" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    生日
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanBirthday" value="@res.human_birthday" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+            </tr>
+
+            <tr>
+                <td width="11%" class="TD_STYLE1">
+                    民族
+                </td>
+                <td class="TD_STYLE2" width="14%">
+                    <input type="text" name="engageResume.humanRace" value="@res.human_race" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    宗教信仰
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanReligion" value="@res.human_religion" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    政治面貌
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanParty" value="@res.human_party" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+            </tr>
+            <tr>
+
+                <td class="TD_STYLE1">
+                    身份证号码
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanIdcard" value="@res.human_idcard" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    年龄
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanAge" value="@res.human_age" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    毕业学校
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanCollege" value="@res.human_college" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1" width="10%">
+                    学历
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanEducatedDegree" value="@res.human_educated_degree" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    教育年限
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanEducatedYears" value="@res.human_educated_years" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    学历专业
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanEducatedMajor" value="@res.human_educated_major" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    薪酬要求
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.demandSalaryStandard" value="@res.demand_salary_standard" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    注册时间
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.registTime" value="@res.regist_time" readonly="readonly" class="INPUT_STYLE2">
+
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    特长
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanSpecility" value="@res.human_specility" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    爱好
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.humanHobby" value="@res.human_hobby" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    <span style="font-size: 10.5pt; font-family: 宋体;"></span>
+                    推荐人
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.passChecker" value="@res.register" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+                <td class="TD_STYLE1">
+                    <span style="font-size: 10.5pt; font-family: 宋体;"></span>
+                    推荐时间
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="engageResume.passCheckTime" value="@res.regist_time" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    档案附件
+                </td>
+                <td colspan="7" class="TD_STYLE2">
+                    <input type="text" name="er.checker" readonly="readonly" class="INPUT_STYLE2">
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    个人履历
+                </td>
+                <td colspan="7" class="TD_STYLE2">
+                    <textarea name="engageResume.humanHistoryRecords" rows="4"
+                              class="TEXTAREA_STYLE1" readonly="readonly">@res.human_history_records
+						</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    备注
+                </td>
+                <td colspan="7" class="TD_STYLE2">
+                    <textarea name="engageResume.remark" rows="4" class="TEXTAREA_STYLE1" readonly="readonly"> @res.remark
+						</textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="TD_STYLE1">
+                    筛选推荐意见
+                </td>
+                <td class="TD_STYLE2" colspan="7">
+                    <textarea name="engageResume.recomandation" rows="4" class="TEXTAREA_STYLE1" readonly="readonly">@res.recomandation	</textarea>
+                </td>
+            </tr>
+
+
+
+            <tr>
+                <td class="TD_STYLE1">
+                    面试次数
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="interview_amount" value="@eng.interview_amount" class="INPUT_STYLE2" readonly="readonly" />
+                </td>
+                <td class="TD_STYLE1">
+                    形象评价
+                </td>
+                <td class="TD_STYLE2">
+
+                    <input type="text" name="image_degree" value="@eng.image_degree" class="INPUT_STYLE2" readonly="readonly" />
+
+                </td>
+                <td class="TD_STYLE1">
+                    口才评价
+                </td>
+                <td class="TD_STYLE2">
+
+                    <input type="text" name="native_language_degree" value="@eng.native_language_degree" class="INPUT_STYLE2" readonly="readonly" />
+
+                </td>
+                <td class="TD_STYLE1">
+                    外语口语能力
+                </td>
+                <td class="TD_STYLE1">
+                    <input type="hidden" name="ein_id" id="ein_id" value="@eng.ein_id" />
+
+                    <input type="text" name="foreign_language_degree" value="@eng.foreign_language_degree" class="INPUT_STYLE2" readonly="readonly" />
+
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    应变能力
+                </td>
+                <td class="TD_STYLE2">
+
+                    <input type="text" name="response_speed_degree" value="@eng.response_speed_degree" class="INPUT_STYLE2" readonly="readonly" />
+
+                </td>
+                <td class="TD_STYLE1">
+                    EQ
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="EQ_degree" value="@eng.EQ_degree" class="INPUT_STYLE2" readonly="readonly" />
+
+                </td>
+                <td class="TD_STYLE1">
+                    IQ
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="IQ_degree" value="@eng.IQ_degree" class="INPUT_STYLE2" readonly="readonly" />
+
+                </td>
+                <td class="TD_STYLE1">
+                    综合素质
+                </td>
+                <td class="TD_STYLE1">
+                    <input type="text" name="multi_quality_degree" value="@eng.multi_quality_degree" class="INPUT_STYLE2" readonly="readonly" />
+
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    面试人
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="register" id="register" value="@eng.register" class="INPUT_STYLE2" />
+                </td>
+                <td class="TD_STYLE1">
+                    面试时间
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="registe_time" value="@eng.registe_time" class="INPUT_STYLE2" />
+
+                </td>
+                <td class="TD_STYLE1">
+                    筛选人
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="checker" value="@eng.checker" class="INPUT_STYLE2" />
+                </td>
+                <td class="TD_STYLE1">
+                    筛选时间
+                </td>
+                <td class="TD_STYLE2">
+                    <input type="text" name="check_time" value="@eng.check_time" class="INPUT_STYLE2" />
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    录用申请审核意见
+                </td>
+                <td class="TD_STYLE2" colspan="7">
+                    <textarea name="" class="TEXTAREA_STYLE1"
+                              rows="4" readonly="" id="">@res.pass_checkComment</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="TD_STYLE1">
+                    录用申请审核意见
+                </td>
+                <td class="TD_STYLE2" colspan="7">
+                    <textarea name="engageResume.passCheckcomment" class="TEXTAREA_STYLE1"
+                              rows="4" readonly="readonly" id="passCheckcomment">@res.pass_checkComment</textarea>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

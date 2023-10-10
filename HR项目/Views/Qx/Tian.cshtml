@@ -1,0 +1,122 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>添加用户</title>
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css" />
+    <script type="text/javascript" src="../../javascript/jquery-1.7.2.js"></script>
+    <script type="text/javascript"
+            src="../../javascript/jquery.messager.js"></script>
+    <script type="text/javascript" src="../../javascript/user_add.js"></script>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+        <form method="post" action="">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                            <el-breadcrumb-item>权限管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>添加用户</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="保存" class="BUTTON_STYLE1" v-on:click="bc()" />
+                        <input type="button" value="返回" class="BUTTON_STYLE1"
+                               onclick="history.back()">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=3 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td class="TD_STYLE1">用户名称</td>
+                    <td class="TD_STYLE2">
+                        <input type="text" id="userName" v-model="zh" name="users.userName" />
+                    </td>
+                    <td class="TD_STYLE1">用户密码</td>
+                    <td class="TD_STYLE2">
+                        <input type="password" id="userPassword" v-model="mi" name="users.userPassword" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">真实姓名</td>
+                    <td class="TD_STYLE2">
+                        <input type="text" id="userTrueName" v-model="name" name="users.userTrueName" />
+                    </td>
+                    <td class="TD_STYLE1">职位</td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="region" placeholder="请选择职位">
+                            <el-option v-for="item in tableData" :label="item.RolesName" :value="item.RolesID" :key="item.index"></el-option>
+                        </el-select>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    tableData: [],
+                    region: "",
+                    zh: "",
+                    name: "",
+                    mi: "",
+                }
+            },
+            methods: {
+                fill() {
+                    axios.get("/Qx/Xia")
+                        .then(res => {
+                            this.tableData = res.data;
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                },
+                bc() {
+                    axios.get("/Qx/Tj", {
+                        params: {
+                            zh: this.zh,
+                            mi: this.mi,
+                            name: this.name,
+                            zw: this.region
+                        }
+                    })
+                        .then(res => {
+                            if (res.data == "1") {
+                                alert("添加成功");
+                                location.href = "/Qx/Index"
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                }
+            },
+            mounted: function () {
+                this.fill();
+            }
+
+        })
+    </script>
+</body>
+</html>

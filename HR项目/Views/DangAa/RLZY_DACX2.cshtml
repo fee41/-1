@@ -1,0 +1,197 @@
+﻿
+@{
+    Layout = null;
+}
+@using Model;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css" />
+    <link rel="stylesheet"
+          href="../../css/cwcalendar.css" type="text/css">
+    <script type="text/javascript"
+            src="../../javascript/comm/comm.js">
+    </script>
+    <script type="text/javascript"
+            src="../../javascript/comm/list.js">
+    </script>
+    <script type="text/javascript"
+            src="../../javascript/calendar-ch.js">
+    </script>
+    <script type="text/javascript"
+            src="../../javascript/jquery-1.7.2.js">
+    </script>
+    <script type="text/javascript"
+            src="../../javascript/locate.js">
+    </script>
+    <script type="text/javascript">
+
+        function se() {
+            var se = $("#ss").val();
+            console.log(se);
+            var url = "/DangAa/IIshow/?id=" + se + "&name=first_kind_id";
+            console.log(url);
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#secondKind").html('');
+                $.each(data, function (i, item) {
+                    console.log(item.third_kind_name);
+                    $("#secondKind").append("<option value='" + item.second_kind_id + "'>" + item.second_kind_name + "</option>");
+
+                })
+            });
+        };
+        function er() {
+            var se = $("#secondKind").val();
+            console.log(se);
+            var url = "/DangAa/IIshow/?id=" + se + "&name=second_kind_id";
+            console.log(url);
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#thirdKind").html('');
+                $.each(data, function (i, item) {
+                    console.log(item.third_kind_name);
+                    $("#thirdKind").append("<option value='" + item.third_kind_id + "'>" + item.third_kind_name + "</option>");
+                   
+                })
+            });
+        }
+        function dd() {
+            var se = $("#sd").val();
+            console.log(se);
+            var url = "/ZhiWeiFaBu/GetLists/?id=" + se
+            console.log(url);
+            $.getJSON(url, function (data) {
+                console.log(data);
+                $("#secondKind2").html('');
+                $.each(data, function (i, item) {
+                    console.log(item);
+                    $("#secondKind2").append("<option value='" + item.Major_Id + "'>" + item.Major_Name + "</option>");
+
+                })
+            });
+        };
+
+    </script>
+</head>
+
+<body>
+    @{ IEnumerable<config_file_first_kind> eng = ViewBag.s; IEnumerable<Config_Major_Kind> eng2 = ViewBag.sd;}
+    <div id="app">
+        <form role="form" action="/DangAa/RLDA_ChanXu2" method="post">
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">您正在做的业务是：人力资源--人力资源档案管理--人力资源档案查询 </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="submit" value="查询" class="BUTTON_STYLE1" />
+                        <input type="button" value="搜索" class="BUTTON_STYLE1"
+                               onclick="location.href='query_keywords.html'">
+                        <input type="hidden" name="result" value="toQueryList" />
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr class="TR_STYLE1">
+                    <td width="16%" class="TD_STYLE1">
+                        请选择员工所在I级机构
+                    </td>
+                    <td width="84%" class="TD_STYLE2">
+                        <select name="first_kind_id" size="5" id="ss"
+                                class="SELECT_STYLE2" onclick="se()">
+                            <option selected="selected">全部</option>
+                            @foreach (var item in eng)
+                            {
+                                <option value="@item.first_kind_id" selected="selected">@item.first_kind_name</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        请选择员工所在II级机构
+                    </td>
+                    <td width="84%" class="TD_STYLE2">
+                        <select name="second_kind_id" size="5" id="secondKind"
+                                class="SELECT_STYLE2" onclick="er()">
+                            <option selected="selected">
+                                全部
+                            </option>
+
+
+
+                        </select>
+                    </td>
+                </tr>
+                <tr class="TR_STYLE1">
+                    <td width="16%" class="TD_STYLE1">
+                        请选择员工所在III级机构
+                    </td>
+                    <td width="84%" class="TD_STYLE2">
+                        <select name="third_kind_id" class="SELECT_STYLE2" size="5" id="thirdKind">
+                            <option selected="selected">
+                                全部
+                            </option>
+
+
+
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        请选择职位分类
+                    </td>
+                    <td width="84%" class="TD_STYLE2">
+                        <select name="human_major_kind_id" size="5"
+                                class="SELECT_STYLE2" id="sd" onclick="dd()">
+                            <option selected="selected">
+                                全部
+                            </option>
+
+                            @foreach (var item in eng2)
+                            {
+                                <option value="@item.Major_kind_id">@item.Major_kind_name</option>
+                            }
+
+                        </select>
+                    </td>
+                </tr>
+                <tr class="TR_STYLE1">
+                    <td width="16%" class="TD_STYLE1">
+                        请选择职位名称
+                    </td>
+                    <td width="84%" class="TD_STYLE2">
+                        <select name="human_major_id" size="5" class="SELECT_STYLE2" id="secondKind2">
+                        </select>
+                    </td>
+                
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        请输入建档时间
+                    </td>
+                    <td width="84%" class="TD_STYLE2">
+
+                        <input type="date" name="regist_time" id="utilBean.startDate" onclick="aa('utilBean.startDate')"
+                               style="width: 14%" class="INPUT_STYLE2">
+                        至
+                        <input type="date" name="check_time" id="pass_checkComment"
+                               style="width: 14%" class="INPUT_STYLE2" onclick="aa('utilBean.endDate')">
+                        （YYYY-MM-DD）
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

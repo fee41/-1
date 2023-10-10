@@ -1,0 +1,94 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="../../css/table.css"
+          type="text/css"></link>
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+
+    <style type="text/css">
+        .el-input__inner {
+            background-color: #FFFFCC;
+            height: 30px;
+            line-height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <form action="" method="post">
+            <input type="hidden" name="page.startPage" value="0">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item><a href="/Main/main">首页</a></el-breadcrumb-item>
+                            <el-breadcrumb-item>人力资源管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬发放管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>薪酬发放登记</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="确 定" v-on:click="ti()" class="BUTTON_STYLE1">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="27%" class="TD_STYLE1">
+                        薪酬发放方式
+                    </td>
+                    <td width="22%" class="TD_STYLE1">
+                        <el-select v-model="fs" placeholder="请选择活动区域">
+                            <el-option label="一级机构发放方式" value="1"></el-option>
+                            <el-option label="二级机构发放方式" value="2"></el-option>
+                            <el-option label="三级机构发放方式" value="3"></el-option>
+                        </el-select>
+                    </td>
+                    <td width="60%" class="TD_STYLE1"></td>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    fs: ""
+                }
+            },
+            methods: {
+                ti() {
+                    var sql = "  check_status = 3 ";
+                    if (this.fs == "1") {
+                        sql += " AND first_kind_id != '' AND second_kind_id = '' AND third_kind_id = '' ";
+                    } else if (this.fs == "2") {
+                        sql += " AND first_kind_id != '' AND second_kind_id != '' AND third_kind_id = '' ";
+                    } else if (this.fs == "3") {
+                        sql += " AND first_kind_id != '' AND second_kind_id != '' AND third_kind_id != '' ";
+                    }
+
+                    location.href = "/XinCBiao/CFaJi?tiao=" + sql;
+
+                }
+            },
+            mounted: function () {
+
+            }
+        });
+    </script>
+</body>
+</html>

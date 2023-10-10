@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5C405663-85FE-45DB-8161-2AD9E4FF091D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Model</RootNamespace>
+    <AssemblyName>Model</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Change.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="ConfigFileThirdKind.cs" />
+    <Compile Include="config_file_first_kind.cs" />
+    <Compile Include="Config_Major.cs" />
+    <Compile Include="Config_Major_Kind.cs" />
+    <Compile Include="Config_Public_Char.cs" />
+    <Compile Include="Engage_Interview.cs" />
+    <Compile Include="Engage_Major_Release.cs" />
+
+    <Compile Include="Engage_Resume.cs" />
+
+    <Compile Include="FenYe.cs" />
+
+    <Compile Include="FileSecondKind.cs" />
+    <Compile Include="First_kind.cs" />
+
+    <Compile Include="FY.cs" />
+    <Compile Include="Human_File.cs" />
+
+    <Compile Include="GroupMenu.cs" />
+    <Compile Include="HumanFile.cs" />
+    <Compile Include="Jurisdiction.cs" />
+
+    <Compile Include="LianJi.cs" />
+    <Compile Include="Major.cs" />
+    <Compile Include="MajorKind.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PublicChar.cs" />
+    <Compile Include="Roles.cs" />
+    <Compile Include="RolesJurisdiction.cs" />
+    <Compile Include="SalaryGrant.cs" />
+    <Compile Include="SalaryGrantDetails.cs" />
+    <Compile Include="SalaryStandard.cs" />
+    <Compile Include="SalaryStandardDetails.cs" />
+    <Compile Include="Tree.cs" />
+    <Compile Include="UserRoles.cs" />
+    <Compile Include="Users.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
